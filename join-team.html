@@ -286,9 +286,9 @@ textarea.finput{resize:vertical;min-height:130px;line-height:1.7}
     <div class="s-ring"><i class="fas fa-check s-check"></i></div>
     <h2 class="s-title">Application Sent!</h2>
     <div class="s-name" id="s-name">Your Application</div>
-    <p class="s-sub">Thank you for applying to DM Car Agency. Our team will review your details and get back to you within 2–3 business days.</p>
+    <p class="s-sub">Thank you for applying to DM Car Agency. Our team will review your details and get back to you within minutes.</p>
     <div class="s-bar"><div class="s-bar-fill" id="sBarFill"></div></div>
-    <p class="s-hint" id="sHint">You'll be redirected to your confirmation page in <strong id="sCountdown">6</strong> seconds…</p>
+    <p class="s-hint" id="sHint">You'll be redirected to your confirmation page in <strong id="sCountdown">20</strong> seconds…</p>
   </div>
 </div>
 
@@ -644,7 +644,7 @@ $('joinForm').addEventListener('submit', async function(e) {
   $('successOverlay').classList.add('show');
 
   // Countdown + progress bar then redirect to team-success-page.html
-  const totalSeconds = 6;
+  const totalSeconds = 20;
   let remaining = totalSeconds;
   const bar = $('sBarFill');
   const countdown = $('sCountdown');
