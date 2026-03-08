@@ -1,105 +1,33 @@
-// ═══════════════════════════════════════
-// DM Car Agency — Netlify Serverless Function
-// Securely calls Groq API using env variable
-// GROQ_API_KEY is set in Netlify dashboard
-// ═══════════════════════════════════════
+// ── Vercel Serverless Function: Groq Proxy ───────────────────────────
+// Reads GROQ_API_KEY from Vercel environment variables (never exposed
+// to the browser). Called by the frontend at /api/chat
+// ─────────────────────────────────────────────────────────────────────
 
-const https = require('https');
+export default async function handler(req, res) {
+  // Only allow POST
+  if (req.method !== 'POST') {
+    return res.status(405).json({ error: 'Method Not Allowed' });
+  }
 
-function httpsPost(url, headers, body) {
-  return new Promise((resolve, reject) => {
-    const urlObj = new URL(url);
-    const options = {
-      hostname: urlObj.hostname,
-      path: urlObj.pathname,
+  const GROQ_API_KEY = process.env.GROQ_API_KEY;
+  if (!GROQ_API_KEY) {
+    return res.status(500).json({ error: 'GROQ_API_KEY not set in Vercel environment variables.' });
+  }
+
+  try {
+    const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
       method: 'POST',
-      headers: { ...headers, 'Content-Length': Buffer.byteLength(body) }
-    };
-    const req = https.request(options, res => {
-      let data = '';
-      res.on('data', chunk => data += chunk);
-      res.on('end', () => resolve({ status: res.statusCode, body: data }));
-    });
-    req.on('error', reject);
-    req.write(body);
-    req.end();
-  });
-}
-
-exports.handler = async function(event) {
-
-  // CORS headers so browser can call this function
-  const corsHeaders = {
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Headers': 'Content-Type',
-    'Access-Control-Allow-Methods': 'POST, OPTIONS'
-  };
-
-  // Handle preflight
-  if (event.httpMethod === 'OPTIONS') {
-    return { statusCode: 200, headers: corsHeaders, body: '' };
-  }
-
-  if (event.httpMethod !== 'POST') {
-    return { statusCode: 405, headers: corsHeaders, body: JSON.stringify({ error: 'Method not allowed' }) };
-  }
-
-  const apiKey = process.env.GROQ_API_KEY;
-  if (!apiKey) {
-    return {
-      statusCode: 500,
-      headers: corsHeaders,
-      body: JSON.stringify({ error: 'API key not configured on server.' })
-    };
-  }
-
-  let parsed;
-  try {
-    parsed = JSON.parse(event.body);
-  } catch {
-    return { statusCode: 400, headers: corsHeaders, body: JSON.stringify({ error: 'Invalid request body' }) };
-  }
-
-  try {
-    const payload = JSON.stringify({
-      model: 'llama-3.3-70b-versatile',
-      messages: parsed.messages,
-      temperature: 0.7,
-      max_tokens: 500,
-      top_p: 0.9
-    });
-
-    const result = await httpsPost(
-      'https://api.groq.com/openai/v1/chat/completions',
-      {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${apiKey}`
+      headers: {
+        'Content-Type':  'application/json',
+        'Authorization': `Bearer ${GROQ_API_KEY}`
       },
-      payload
-    );
+      body: JSON.stringify(req.body)
+    });
 
-    const data = JSON.parse(result.body);
-
-    if (result.status !== 200) {
-      return {
-        statusCode: result.status,
-        headers: corsHeaders,
-        body: JSON.stringify({ error: data.error?.message || `Groq error ${result.status}` })
-      };
-    }
-
-    const reply = data.choices?.[0]?.message?.content || '';
-    return {
-      statusCode: 200,
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ reply })
-    };
+    const data = await response.json();
+    return res.status(response.status).json(data);
 
   } catch (err) {
-    return {
-      statusCode: 500,
-      headers: corsHeaders,
-      body: JSON.stringify({ error: err.message || 'Internal server error' })
-    };
+    return res.status(500).json({ error: err.message });
   }
-};
+}
