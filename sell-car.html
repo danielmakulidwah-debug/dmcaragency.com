@@ -1,0 +1,1071 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="List your car for sale with DM Car Agency — reach thousands of buyers across Malawi">
+<title>Sell Your Car — DM Car Agency</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500;600&family=Oswald:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+/* ═══════════════════════════════════
+   DESIGN SYSTEM — DM Car Agency
+═══════════════════════════════════ */
+:root {
+  --ink:#0a0a0a; --ink2:#111; --ink3:#1c1c1c; --ink4:#242424;
+  --smoke:#2e2e2e; --fog:#555; --mist:#888; --linen:#f0ede8; --white:#fff;
+  --flame:#e8491d; --flame2:#ff5a30; --gold:#c8973a; --gold2:#f0c060;
+  --green:#27ae60; --green2:#2ecc71; --wa:#25D366;
+  --fd:'Playfair Display',Georgia,serif;
+  --fh:'Oswald',sans-serif;
+  --fb:'DM Sans',sans-serif;
+  --ease:cubic-bezier(0.22,1,0.36,1);
+  --r:6px;
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:var(--fb);background:var(--ink);color:var(--linen);min-height:100vh}
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-track{background:var(--ink2)}
+::-webkit-scrollbar-thumb{background:var(--flame);border-radius:2px}
+
+/* ── HEADER ── */
+.hdr{position:sticky;top:0;z-index:200;background:rgba(10,10,10,.96);
+  backdrop-filter:blur(20px);border-bottom:1px solid rgba(240,237,232,.06);
+  padding:0 2.5rem;display:flex;align-items:center;justify-content:space-between;
+  height:68px;transition:box-shadow .3s}
+.hdr.scrolled{box-shadow:0 4px 40px rgba(0,0,0,.5)}
+.logo{font-family:var(--fh);font-size:1.3rem;font-weight:700;letter-spacing:3px;
+  text-transform:uppercase;color:var(--white);text-decoration:none}
+.logo span{color:var(--flame)}
+.hnav{display:flex;align-items:center;gap:.75rem}
+.nbtn{display:inline-flex;align-items:center;gap:7px;padding:9px 18px;
+  font-family:var(--fh);font-size:.7rem;letter-spacing:2px;text-transform:uppercase;
+  border-radius:var(--r);text-decoration:none;font-weight:600;transition:all .25s;
+  cursor:pointer;border:none}
+.ng{background:transparent;color:var(--linen);border:1px solid rgba(240,237,232,.2)}
+.ng:hover{border-color:var(--flame);color:var(--flame)}
+.nl{background:transparent;color:var(--linen);border:1px solid rgba(240,237,232,.2)}
+.nl:hover{border-color:var(--wa);color:var(--wa)}
+
+/* ── HERO SECTION ── */
+.page-hero{
+  position:relative;overflow:hidden;
+  padding:4rem 2.5rem 3rem;
+  border-bottom:1px solid rgba(240,237,232,.06);
+}
+.page-hero::before{content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse 50% 120% at 80% 50%,rgba(232,73,29,.07),transparent)}
+.page-hero::after{content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse 40% 80% at 20% 80%,rgba(200,151,58,.04),transparent)}
+.hero-in{max-width:1000px;margin:0 auto;position:relative}
+.kicker{font-family:var(--fh);font-size:.65rem;letter-spacing:5px;text-transform:uppercase;
+  color:var(--flame);display:flex;align-items:center;gap:10px;margin-bottom:.75rem}
+.kicker span{width:28px;height:1px;background:var(--flame)}
+.htitle{font-family:var(--fd);font-size:clamp(2.2rem,5vw,3.5rem);font-weight:900;
+  line-height:1.05;color:var(--white);margin-bottom:.75rem}
+.htitle em{font-style:italic;color:rgba(240,237,232,.25)}
+.hsub{color:var(--mist);font-size:1rem;max-width:500px;line-height:1.7}
+
+/* ── BENEFITS STRIP ── */
+.benefits{
+  max-width:1000px;margin:0 auto;
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+  gap:1px;background:rgba(240,237,232,.06);
+  border:1px solid rgba(240,237,232,.06);
+  border-radius:var(--r);overflow:hidden;margin-bottom:3rem;
+}
+.ben{
+  background:var(--ink2);padding:1.75rem 1.5rem;
+  display:flex;align-items:flex-start;gap:1rem;
+  transition:background .25s;
+}
+.ben:hover{background:var(--ink3)}
+.ben-icon{
+  width:44px;height:44px;border-radius:var(--r);
+  background:rgba(232,73,29,.12);
+  display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;font-size:1.1rem;color:var(--flame);
+}
+.ben-text h4{font-family:var(--fh);font-size:.7rem;letter-spacing:2px;
+  text-transform:uppercase;color:var(--white);margin-bottom:4px}
+.ben-text p{color:var(--fog);font-size:.82rem;line-height:1.5}
+
+/* ── FORM WRAPPER ── */
+.form-wrap{max-width:1000px;margin:0 auto;padding:0 2.5rem 5rem}
+
+/* Progress stepper */
+.stepper{display:flex;gap:0;margin-bottom:3rem;border:1px solid rgba(240,237,232,.08);
+  border-radius:var(--r);overflow:hidden}
+.step{flex:1;padding:.9rem;text-align:center;background:var(--ink2);
+  font-family:var(--fh);font-size:.62rem;letter-spacing:2px;text-transform:uppercase;
+  color:var(--fog);transition:all .3s;position:relative;cursor:pointer}
+.step:not(:last-child)::after{content:'';position:absolute;right:0;top:50%;
+  transform:translateY(-50%);width:1px;height:50%;background:rgba(240,237,232,.06)}
+.step.active{background:var(--ink3);color:var(--flame)}
+.step.done{background:rgba(39,174,96,.08);color:var(--green)}
+.step-num{display:inline-flex;align-items:center;justify-content:center;
+  width:20px;height:20px;border-radius:50%;background:rgba(240,237,232,.08);
+  font-size:.65rem;margin-right:6px;transition:all .3s}
+.step.active .step-num{background:var(--flame);color:#fff}
+.step.done .step-num{background:var(--green);color:#fff}
+
+/* ── FORM SECTIONS ── */
+.fsec{
+  background:var(--ink3);border:1px solid rgba(240,237,232,.06);
+  border-radius:var(--r);padding:2rem 2rem;margin-bottom:1.5rem;
+  animation:secIn .4s var(--ease) both;
+}
+@keyframes secIn{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+.fsec-title{
+  display:flex;align-items:center;gap:.75rem;
+  font-family:var(--fh);font-size:.8rem;letter-spacing:3px;text-transform:uppercase;
+  color:var(--white);margin-bottom:1.75rem;padding-bottom:1rem;
+  border-bottom:1px solid rgba(240,237,232,.06);
+}
+.fsec-title i{color:var(--flame)}
+.fsec-title .sec-num{
+  width:26px;height:26px;border-radius:50%;
+  background:rgba(232,73,29,.15);border:1px solid rgba(232,73,29,.3);
+  display:flex;align-items:center;justify-content:center;
+  font-size:.7rem;color:var(--flame);flex-shrink:0;
+}
+
+/* ── FORM GRID ── */
+.fgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1.25rem}
+.fgrid-3{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:1.25rem}
+.fgroup{display:flex;flex-direction:column;gap:7px}
+.fgroup.full{grid-column:1/-1}
+.flabel{
+  font-family:var(--fh);font-size:.62rem;letter-spacing:3px;
+  text-transform:uppercase;color:var(--mist);display:flex;align-items:center;gap:6px
+}
+.req{color:var(--flame);font-size:.75rem}
+.opt{color:var(--smoke);font-size:.6rem;letter-spacing:1px;font-family:var(--fb);
+  text-transform:none;font-style:italic}
+.finput{
+  background:var(--ink2);border:1px solid rgba(240,237,232,.1);
+  color:var(--linen);padding:12px 14px;border-radius:var(--r);
+  font-family:var(--fb);font-size:.9rem;transition:border-color .2s,box-shadow .2s;
+  width:100%;
+}
+.finput::placeholder{color:var(--fog)}
+.finput:focus{outline:none;border-color:var(--flame);
+  box-shadow:0 0 0 3px rgba(232,73,29,.1)}
+.finput:valid:not(:placeholder-shown){border-color:rgba(39,174,96,.4)}
+.finput option{background:var(--ink3)}
+textarea.finput{resize:vertical;min-height:120px;line-height:1.7}
+
+/* char counter */
+.fhint{display:flex;justify-content:space-between;align-items:center;
+  font-size:.75rem;color:var(--fog);margin-top:4px}
+.fhint.warn{color:var(--gold)}
+.fhint.err{color:var(--flame)}
+
+/* ── FEATURES CHECKBOXES ── */
+.features-grid{
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:.75rem
+}
+.check-item{
+  display:flex;align-items:center;gap:.75rem;
+  padding:.9rem 1rem;background:var(--ink2);
+  border:1px solid rgba(240,237,232,.06);border-radius:var(--r);
+  cursor:pointer;transition:all .2s;user-select:none;
+}
+.check-item:hover{border-color:rgba(232,73,29,.3);background:var(--ink4)}
+.check-item input[type="checkbox"]{display:none}
+.check-box{
+  width:20px;height:20px;border:2px solid rgba(240,237,232,.2);
+  border-radius:4px;flex-shrink:0;display:flex;align-items:center;
+  justify-content:center;transition:all .2s;
+}
+.check-item input:checked ~ .check-box{background:var(--flame);border-color:var(--flame)}
+.check-item input:checked ~ .check-box::after{content:'\f00c';font-family:'Font Awesome 6 Free';
+  font-weight:900;font-size:.6rem;color:#fff}
+.check-item input:checked ~ .check-label{color:var(--white)}
+.check-label{color:var(--mist);font-size:.85rem;transition:color .2s}
+
+/* ── PHOTO UPLOAD ── */
+.upload-zone{
+  border:2px dashed rgba(232,73,29,.3);border-radius:var(--r);
+  padding:3rem 2rem;text-align:center;cursor:pointer;
+  background:rgba(232,73,29,.02);transition:all .25s;position:relative;
+}
+.upload-zone:hover,.upload-zone.drag-over{
+  border-color:var(--flame);background:rgba(232,73,29,.06);
+}
+.upload-zone.drag-over{transform:scale(1.01)}
+.upload-icon-wrap{
+  width:64px;height:64px;border-radius:50%;
+  background:rgba(232,73,29,.1);margin:0 auto 1.25rem;
+  display:flex;align-items:center;justify-content:center;
+  font-size:1.5rem;color:var(--flame);
+  transition:transform .3s;
+}
+.upload-zone:hover .upload-icon-wrap{transform:translateY(-4px)}
+.upload-title{font-family:var(--fd);font-size:1.2rem;color:var(--white);margin-bottom:.5rem}
+.upload-sub{color:var(--fog);font-size:.85rem;margin-bottom:.5rem}
+.upload-hint{color:var(--smoke);font-size:.75rem}
+
+#carImagesInput{display:none}
+
+.photo-counter{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-top:1rem;padding:.75rem 1rem;
+  background:var(--ink2);border-radius:var(--r);
+  font-size:.82rem;color:var(--mist);
+}
+.photo-counter strong{color:var(--white)}
+.photo-bar{width:120px;height:4px;background:rgba(240,237,232,.1);border-radius:2px}
+.photo-bar-fill{height:100%;background:var(--flame);border-radius:2px;transition:width .3s}
+.photo-bar-fill.ok{background:var(--green)}
+
+.photo-notice{
+  margin-top:.75rem;padding:.7rem 1rem;
+  background:rgba(232,73,29,.08);border:1px solid rgba(232,73,29,.2);
+  border-radius:var(--r);font-size:.82rem;color:rgba(232,73,29,.9);display:none;
+}
+.photo-notice.show{display:block}
+.photo-notice.ok-notice{
+  background:rgba(39,174,96,.08);border-color:rgba(39,174,96,.2);
+  color:rgba(39,174,96,.9);
+}
+
+/* Image previews */
+.img-preview-grid{
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));
+  gap:.75rem;margin-top:1rem;
+}
+.img-preview-grid:empty{display:none}
+.prev-item{
+  position:relative;aspect-ratio:1;border-radius:var(--r);overflow:hidden;
+  background:var(--ink2);border:1px solid rgba(240,237,232,.08);
+  animation:prevIn .3s var(--ease);
+}
+@keyframes prevIn{from{opacity:0;transform:scale(.9)}to{opacity:1;transform:scale(1)}}
+.prev-item img{width:100%;height:100%;object-fit:cover;display:block}
+.prev-item .order-badge{
+  position:absolute;bottom:6px;left:6px;
+  background:rgba(0,0,0,.7);color:#fff;
+  width:20px;height:20px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:.65rem;font-weight:700;
+}
+.prev-item .order-badge.first{background:var(--gold);color:#1a1000}
+.rmv-btn{
+  position:absolute;top:5px;right:5px;
+  width:24px;height:24px;border-radius:50%;
+  background:rgba(232,73,29,.9);color:#fff;
+  border:none;cursor:pointer;font-size:.9rem;font-weight:700;
+  display:flex;align-items:center;justify-content:center;
+  transition:all .2s;opacity:0;
+}
+.prev-item:hover .rmv-btn{opacity:1;transform:scale(1.1)}
+
+/* ── SUBMIT ── */
+.submit-wrap{
+  margin-top:2.5rem;padding:2.5rem;
+  background:var(--ink3);border:1px solid rgba(240,237,232,.06);
+  border-radius:var(--r);text-align:center;
+}
+.submit-wrap p{color:var(--fog);font-size:.85rem;margin-bottom:1.5rem;line-height:1.7}
+.submit-btn{
+  display:inline-flex;align-items:center;gap:10px;
+  padding:1.1rem 3.5rem;
+  background:var(--green);color:#fff;
+  border:none;border-radius:2px;
+  font-family:var(--fh);font-size:.85rem;letter-spacing:3px;text-transform:uppercase;
+  font-weight:600;cursor:pointer;transition:all .3s;position:relative;overflow:hidden;
+  box-shadow:0 8px 32px rgba(39,174,96,.3);
+}
+.submit-btn:hover:not(.loading){
+  background:var(--green2);transform:translateY(-2px);
+  box-shadow:0 12px 40px rgba(39,174,96,.4);
+}
+.submit-btn.loading{pointer-events:none;opacity:.9}
+.btn-txt{display:inline-flex;align-items:center;gap:8px;transition:opacity .3s}
+.submit-btn.loading .btn-txt{opacity:0}
+.btn-dots{
+  position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+  display:none;align-items:center;gap:5px;
+}
+.submit-btn.loading .btn-dots{display:flex}
+.bdot{width:7px;height:7px;background:#fff;border-radius:50%;
+  animation:dp 1.4s infinite ease-in-out}
+.bdot:nth-child(1){animation-delay:-.32s}
+.bdot:nth-child(2){animation-delay:-.16s}
+@keyframes dp{0%,80%,100%{opacity:.3;transform:scale(.8)}40%{opacity:1;transform:scale(1)}}
+
+/* Terms note */
+.terms-note{margin-top:1rem;font-size:.78rem;color:var(--fog)}
+.terms-note a{color:var(--flame);text-decoration:none}
+
+/* ── SUCCESS OVERLAY ── */
+.success-overlay{
+  position:fixed;inset:0;background:rgba(0,0,0,.9);z-index:5000;
+  display:flex;align-items:center;justify-content:center;
+  opacity:0;visibility:hidden;transition:all .4s;
+  backdrop-filter:blur(8px);
+}
+.success-overlay.show{opacity:1;visibility:visible}
+.success-box{
+  background:var(--ink3);border:1px solid rgba(39,174,96,.3);
+  border-radius:var(--r);padding:3.5rem;text-align:center;
+  max-width:460px;width:90%;
+  animation:sboxIn .5s var(--ease);
+}
+@keyframes sboxIn{from{opacity:0;transform:scale(.9) translateY(20px)}to{opacity:1;transform:scale(1) translateY(0)}}
+.s-icon{
+  width:80px;height:80px;border-radius:50%;
+  background:rgba(39,174,96,.12);border:2px solid rgba(39,174,96,.3);
+  display:flex;align-items:center;justify-content:center;
+  margin:0 auto 1.5rem;font-size:2rem;color:var(--green);
+  animation:pulse 2s infinite;
+}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(39,174,96,.3)}50%{box-shadow:0 0 0 12px rgba(39,174,96,0)}}
+.s-title{font-family:var(--fd);font-size:1.8rem;color:var(--white);margin-bottom:.75rem}
+.s-sub{color:var(--mist);line-height:1.7;margin-bottom:2rem}
+.s-car-name{
+  display:inline-block;padding:.5rem 1.25rem;
+  background:rgba(232,73,29,.1);border:1px solid rgba(232,73,29,.25);
+  border-radius:2px;font-family:var(--fh);font-size:.8rem;
+  letter-spacing:3px;text-transform:uppercase;color:var(--flame);
+  margin-bottom:1.5rem;
+}
+.s-progress{
+  width:200px;height:3px;background:rgba(240,237,232,.08);
+  border-radius:2px;margin:0 auto;overflow:hidden;
+}
+.s-progress-fill{height:100%;background:var(--green);border-radius:2px;width:0;
+  animation:prog 2.5s linear forwards}
+@keyframes prog{to{width:100%}}
+
+/* ── TOAST ── */
+.toast{
+  position:fixed;bottom:2.5rem;left:50%;
+  transform:translateX(-50%) translateY(20px);
+  background:var(--ink3);border:1px solid rgba(232,73,29,.3);
+  color:var(--linen);padding:12px 24px;border-radius:var(--r);
+  font-size:.875rem;opacity:0;visibility:hidden;transition:all .3s;
+  z-index:4000;white-space:nowrap;box-shadow:0 8px 30px rgba(0,0,0,.5);
+}
+.toast.show{opacity:1;visibility:visible;transform:translateX(-50%) translateY(0)}
+.toast.ok{border-color:rgba(39,174,96,.3)}
+
+/* ── VALIDATION ── */
+.finput.error{border-color:rgba(232,73,29,.6);box-shadow:0 0 0 3px rgba(232,73,29,.1)}
+.field-err{font-size:.75rem;color:var(--flame);margin-top:4px;display:none}
+.field-err.show{display:block}
+
+/* ── RESPONSIVE ── */
+@media(max-width:900px){
+  .hdr,.page-hero{padding-left:1.25rem;padding-right:1.25rem}
+  .form-wrap{padding-left:1.25rem;padding-right:1.25rem;padding-bottom:3rem}
+}
+@media(max-width:640px){
+  .htitle{font-size:2rem}
+  .benefits{grid-template-columns:1fr 1fr}
+  .fgrid,.fgrid-3{grid-template-columns:1fr}
+  .features-grid{grid-template-columns:1fr 1fr}
+  .fsec{padding:1.5rem}
+  .stepper{display:none}
+  .submit-btn{padding:1.1rem 2rem;width:100%;justify-content:center}
+}
+@media(max-width:380px){
+  .benefits{grid-template-columns:1fr}
+  .features-grid{grid-template-columns:1fr}
+}
+</style>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+// ── SUPABASE CONFIG ──────────────────────────────
+const SUPABASE_URL  = 'https://ospebrnwdvhuituoyxlw.supabase.co';
+const SUPABASE_ANON = 'sb_publishable_k7BrujJj8-zWKaLoHr1gfA_WRn_KWlQ';
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
+// ─────────────────────────────────────────────────
+</script>
+</head>
+<body>
+
+<!-- SUCCESS OVERLAY -->
+<div class="success-overlay" id="successOverlay">
+  <div class="success-box">
+    <div class="s-icon"><i class="fas fa-check"></i></div>
+    <h2 class="s-title">Car Listed!</h2>
+    <div class="s-car-name" id="s-car-name">Your Vehicle</div>
+    <p class="s-sub">Your listing is now live and visible to buyers across Malawi. We'll also contact you on WhatsApp to confirm the details.</p>
+    <div class="s-progress"><div class="s-progress-fill"></div></div>
+    <p style="color:var(--fog);font-size:.78rem;margin-top:.75rem">Redirecting to listings…</p>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<!-- HEADER -->
+<header class="hdr" id="hdr">
+  <a href="index.html" class="logo"><span>DM</span> Car Agency</a>
+  <div class="hnav">
+    <a href="listings.html" class="nbtn ng"><i class="fas fa-car"></i> <span>Browse Cars</span></a>
+    <a href="https://wa.me/265980717420" target="_blank" rel="noopener" class="nbtn nl">
+      <i class="fab fa-whatsapp"></i> <span>WhatsApp Us</span>
+    </a>
+  </div>
+</header>
+
+<!-- PAGE HERO -->
+<section class="page-hero">
+  <div class="hero-in">
+    <div class="kicker"><span></span> Sell Your Car</div>
+    <h1 class="htitle">List Your Car,<br><em>Reach Thousands</em></h1>
+    <p class="hsub">Fill in the form below and your vehicle goes live instantly. Buyers across Malawi are waiting.</p>
+  </div>
+</section>
+
+<!-- BENEFITS STRIP -->
+<div style="max-width:1000px;margin:0 auto;padding:0 2.5rem">
+  <div class="benefits" style="margin-top:2.5rem">
+    <div class="ben">
+      <div class="ben-icon"><i class="fas fa-bolt"></i></div>
+      <div class="ben-text"><h4>Instant Listing</h4><p>Goes live the moment you submit</p></div>
+    </div>
+    <div class="ben">
+      <div class="ben-icon"><i class="fas fa-users"></i></div>
+      <div class="ben-text"><h4>Wide Reach</h4><p>1,000+ daily visitors across Malawi</p></div>
+    </div>
+    <div class="ben">
+      <div class="ben-icon"><i class="fas fa-shield-alt"></i></div>
+      <div class="ben-text"><h4>Safe & Trusted</h4><p>Verified buyers, no spam</p></div>
+    </div>
+    <div class="ben">
+      <div class="ben-icon"><i class="fas fa-tag"></i></div>
+      <div class="ben-text"><h4>Best Price</h4><p>Free valuation on WhatsApp</p></div>
+    </div>
+  </div>
+</div>
+
+<!-- STEPPER -->
+<div class="form-wrap">
+  <div class="stepper" id="stepper">
+    <div class="step active" id="step1"><span class="step-num">1</span>Your Info</div>
+    <div class="step" id="step2"><span class="step-num">2</span>Vehicle</div>
+    <div class="step" id="step3"><span class="step-num">3</span>Description</div>
+    <div class="step" id="step4"><span class="step-num">4</span>Features</div>
+    <div class="step" id="step5"><span class="step-num">5</span>Photos</div>
+  </div>
+
+<!-- ══════════ FORM ══════════ -->
+<form id="sellForm" novalidate>
+
+  <!-- § 1 — OWNER INFO -->
+  <div class="fsec" id="sec-1">
+    <div class="fsec-title">
+      <div class="sec-num">1</div>
+      <i class="fas fa-user"></i> Your Information
+    </div>
+    <div class="fgrid">
+      <div class="fgroup">
+        <label class="flabel">Full Name <span class="req">*</span></label>
+        <input class="finput" type="text" id="ownerName" name="ownerName"
+          placeholder="Enter your full name" required>
+        <span class="field-err" id="err-ownerName">Please enter your full name</span>
+      </div>
+      <div class="fgroup">
+        <label class="flabel">Phone Number <span class="req">*</span></label>
+        <input class="finput" type="tel" id="phone" name="phone"
+          placeholder="+265 980 717 420" required>
+        <span class="field-err" id="err-phone">Please enter your phone number</span>
+      </div>
+      <div class="fgroup">
+        <label class="flabel">Email Address <span class="req">*</span></label>
+        <input class="finput" type="email" id="email" name="email"
+          placeholder="your@email.com" required>
+        <span class="field-err" id="err-email">Please enter a valid email</span>
+      </div>
+      <div class="fgroup">
+        <label class="flabel">Location <span class="req">*</span></label>
+        <input class="finput" type="text" id="location" name="location"
+          placeholder="e.g. Blantyre, Lilongwe, Mzuzu" required>
+        <span class="field-err" id="err-location">Please enter your location</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- § 2 — VEHICLE DETAILS -->
+  <div class="fsec" id="sec-2">
+    <div class="fsec-title">
+      <div class="sec-num">2</div>
+      <i class="fas fa-car"></i> Vehicle Details
+    </div>
+    <div class="fgrid">
+      <div class="fgroup">
+        <label class="flabel">Make <span class="req">*</span></label>
+        <input class="finput" type="text" id="make" name="make"
+          placeholder="e.g. Toyota" required>
+        <span class="field-err" id="err-make">Please enter the car make</span>
+      </div>
+      <div class="fgroup">
+        <label class="flabel">Model <span class="req">*</span></label>
+        <input class="finput" type="text" id="model" name="model"
+          placeholder="e.g. Fortuner" required>
+        <span class="field-err" id="err-model">Please enter the car model</span>
+      </div>
+      <div class="fgroup">
+        <label class="flabel">Year <span class="opt">(optional)</span></label>
+        <select class="finput" id="year" name="year">
+          <option value="">Not Specified</option>
+          <option value="2025">2025</option><option value="2024">2024</option>
+          <option value="2023">2023</option><option value="2022">2022</option>
+          <option value="2021">2021</option><option value="2020">2020</option>
+          <option value="2019">2019</option><option value="2018">2018</option>
+          <option value="2017">2017</option><option value="2016">2016</option>
+          <option value="2015">2015</option><option value="2014">2014</option>
+          <option value="2013">2013</option><option value="2012">2012</option>
+          <option value="2011">2011</option><option value="2010">2010</option>
+          <option value="2009">2009</option><option value="2008">2008</option>
+          <option value="2007">2007</option><option value="2006">2006</option>
+          <option value="2005">2005</option><option value="2004">2004</option>
+          <option value="2003">2003</option><option value="2002">2002</option>
+          <option value="2001">2001</option><option value="2000">2000</option>
+          <option value="1999">1999</option><option value="1998">1998</option>
+          <option value="1997">1997</option><option value="1996">1996</option>
+          <option value="1995">1995</option><option value="1994">1994</option>
+          <option value="1993">1993</option><option value="1992">1992</option>
+          <option value="1991">1991</option><option value="1990">1990</option>
+        </select>
+      </div>
+      <div class="fgroup">
+        <label class="flabel">Price (MWK) <span class="req">*</span></label>
+        <input class="finput" type="number" id="price" name="price"
+          placeholder="e.g. 50000000" min="1" required>
+        <div class="fhint" id="price-hint"><span></span></div>
+        <span class="field-err" id="err-price">Please enter the asking price</span>
+      </div>
+      <div class="fgroup">
+        <label class="flabel">Mileage (km) <span class="opt">(optional)</span></label>
+        <input class="finput" type="number" id="mileage" name="mileage"
+          placeholder="e.g. 45000" min="0">
+      </div>
+      <div class="fgroup">
+        <label class="flabel">Transmission <span class="req">*</span></label>
+        <select class="finput" id="transmission" name="transmission" required>
+          <option value="">Select transmission</option>
+          <option value="Automatic">Automatic</option>
+          <option value="Manual">Manual</option>
+        </select>
+        <span class="field-err" id="err-transmission">Please select transmission type</span>
+      </div>
+      <div class="fgroup">
+        <label class="flabel">Fuel Type <span class="req">*</span></label>
+        <select class="finput" id="fuelType" name="fuelType" required>
+          <option value="">Select fuel type</option>
+          <option value="Petrol">Petrol</option>
+          <option value="Diesel">Diesel</option>
+          <option value="Hybrid">Hybrid</option>
+          <option value="Electric">Electric</option>
+        </select>
+        <span class="field-err" id="err-fuelType">Please select fuel type</span>
+      </div>
+      <div class="fgroup">
+        <label class="flabel">Body Type <span class="opt">(optional)</span></label>
+        <select class="finput" id="bodyType" name="bodyType">
+          <option value="">Not Specified</option>
+          <option value="Sedan">Sedan</option>
+          <option value="SUV">SUV</option>
+          <option value="Truck">Truck / Pickup</option>
+          <option value="Van">Van / Minibus</option>
+          <option value="Hatchback">Hatchback</option>
+          <option value="Coupe">Coupe</option>
+          <option value="Wagon">Station Wagon</option>
+        </select>
+      </div>
+      <div class="fgroup">
+        <label class="flabel">Color <span class="opt">(optional)</span></label>
+        <input class="finput" type="text" id="color" name="color"
+          placeholder="e.g. White, Black, Silver">
+      </div>
+      <div class="fgroup">
+        <label class="flabel">Condition <span class="req">*</span></label>
+        <select class="finput" id="condition" name="condition" required>
+          <option value="">Select condition</option>
+          <option value="Excellent">Excellent — Like new</option>
+          <option value="Good">Good — Minor wear only</option>
+          <option value="Fair">Fair — Noticeable wear</option>
+          <option value="Needs Repair">Needs Repair</option>
+        </select>
+        <span class="field-err" id="err-condition">Please select vehicle condition</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- § 3 — DESCRIPTION -->
+  <div class="fsec" id="sec-3">
+    <div class="fsec-title">
+      <div class="sec-num">3</div>
+      <i class="fas fa-align-left"></i> Description
+    </div>
+    <div class="fgroup">
+      <label class="flabel">Vehicle Description <span class="req">*</span></label>
+      <textarea class="finput" id="description" name="description" required
+        maxlength="1500" rows="5"
+        placeholder="Describe your vehicle's condition, service history, reason for selling, any extras included, recent work done, etc. The more detail, the faster it sells!"></textarea>
+      <div class="fhint" id="desc-hint">
+        <span>Minimum 30 characters</span>
+        <span id="desc-count">0 / 1500</span>
+      </div>
+      <span class="field-err" id="err-description">Please add a description (min 30 characters)</span>
+    </div>
+  </div>
+
+  <!-- § 4 — FEATURES -->
+  <div class="fsec" id="sec-4">
+    <div class="fsec-title">
+      <div class="sec-num">4</div>
+      <i class="fas fa-star"></i> Features &amp; Extras
+      <span style="font-family:var(--fb);font-size:.72rem;letter-spacing:0;
+        text-transform:none;color:var(--fog);font-weight:400;margin-left:auto">Select all that apply</span>
+    </div>
+    <div class="features-grid">
+      <label class="check-item">
+        <input type="checkbox" name="features" value="Air Conditioning">
+        <div class="check-box"></div><span class="check-label">Air Conditioning</span>
+      </label>
+      <label class="check-item">
+        <input type="checkbox" name="features" value="Power Steering">
+        <div class="check-box"></div><span class="check-label">Power Steering</span>
+      </label>
+      <label class="check-item">
+        <input type="checkbox" name="features" value="Power Windows">
+        <div class="check-box"></div><span class="check-label">Power Windows</span>
+      </label>
+      <label class="check-item">
+        <input type="checkbox" name="features" value="ABS Brakes">
+        <div class="check-box"></div><span class="check-label">ABS Brakes</span>
+      </label>
+      <label class="check-item">
+        <input type="checkbox" name="features" value="Airbags">
+        <div class="check-box"></div><span class="check-label">Airbags</span>
+      </label>
+      <label class="check-item">
+        <input type="checkbox" name="features" value="Leather Seats">
+        <div class="check-box"></div><span class="check-label">Leather Seats</span>
+      </label>
+      <label class="check-item">
+        <input type="checkbox" name="features" value="Sunroof">
+        <div class="check-box"></div><span class="check-label">Sunroof / Moonroof</span>
+      </label>
+      <label class="check-item">
+        <input type="checkbox" name="features" value="Navigation">
+        <div class="check-box"></div><span class="check-label">Navigation GPS</span>
+      </label>
+      <label class="check-item">
+        <input type="checkbox" name="features" value="Bluetooth">
+        <div class="check-box"></div><span class="check-label">Bluetooth Audio</span>
+      </label>
+      <label class="check-item">
+        <input type="checkbox" name="features" value="Backup Camera">
+        <div class="check-box"></div><span class="check-label">Backup Camera</span>
+      </label>
+      <label class="check-item">
+        <input type="checkbox" name="features" value="Alloy Wheels">
+        <div class="check-box"></div><span class="check-label">Alloy Wheels</span>
+      </label>
+      <label class="check-item">
+        <input type="checkbox" name="features" value="4WD">
+        <div class="check-box"></div><span class="check-label">4WD / AWD</span>
+      </label>
+      <label class="check-item">
+        <input type="checkbox" name="features" value="Bull Bar">
+        <div class="check-box"></div><span class="check-label">Bull Bar</span>
+      </label>
+      <label class="check-item">
+        <input type="checkbox" name="features" value="Tow Hook">
+        <div class="check-box"></div><span class="check-label">Tow Hook</span>
+      </label>
+      <label class="check-item">
+        <input type="checkbox" name="features" value="Roof Rack">
+        <div class="check-box"></div><span class="check-label">Roof Rack</span>
+      </label>
+      <label class="check-item">
+        <input type="checkbox" name="features" value="Full Service History">
+        <div class="check-box"></div><span class="check-label">Full Service History</span>
+      </label>
+    </div>
+  </div>
+
+  <!-- § 5 — PHOTOS -->
+  <div class="fsec" id="sec-5">
+    <div class="fsec-title">
+      <div class="sec-num">5</div>
+      <i class="fas fa-camera"></i> Vehicle Photos
+    </div>
+
+    <div class="upload-zone" id="uploadZone">
+      <div class="upload-icon-wrap">
+        <i class="fas fa-cloud-upload-alt"></i>
+      </div>
+      <div class="upload-title">Drop photos here</div>
+      <p class="upload-sub">or click to browse your device</p>
+      <p class="upload-hint">JPG, PNG, WebP · Max 5 MB each · 3 minimum, 10 maximum</p>
+    </div>
+
+    <input type="file" id="carImagesInput" accept="image/*" multiple>
+
+    <div class="photo-counter">
+      <span><strong id="imgCount">0</strong> photos selected</span>
+      <div style="display:flex;align-items:center;gap:10px">
+        <span style="font-size:.75rem">Progress</span>
+        <div class="photo-bar">
+          <div class="photo-bar-fill" id="photoBarFill" style="width:0%"></div>
+        </div>
+        <span id="imgStatus" style="font-size:.75rem">0 / 3 min</span>
+      </div>
+    </div>
+
+    <div class="photo-notice" id="photoNotice"></div>
+    <div class="img-preview-grid" id="imgPreview"></div>
+
+    <div style="margin-top:1rem;font-size:.78rem;color:var(--fog);line-height:1.7">
+      <i class="fas fa-lightbulb" style="color:var(--gold);margin-right:5px"></i>
+      <strong style="color:var(--mist)">Pro tip:</strong> Clear, well-lit photos from multiple angles sell cars 3× faster.
+      The first photo becomes the main listing image.
+    </div>
+  </div>
+
+  <!-- SUBMIT -->
+  <div class="submit-wrap">
+    <p>By submitting, your listing goes live immediately on DM Car Agency.<br>
+      Our team may contact you to verify details before featuring your car.</p>
+    <button type="submit" class="submit-btn" id="submitBtn">
+      <span class="btn-txt"><i class="fas fa-rocket"></i> Publish My Listing</span>
+      <div class="btn-dots">
+        <div class="bdot"></div>
+        <div class="bdot"></div>
+        <div class="bdot"></div>
+      </div>
+    </button>
+    <div class="terms-note">
+      Need a free valuation first?
+      <a href="https://wa.me/265980717420?text=Hello%21%20I%27d%20like%20a%20free%20car%20valuation." target="_blank">Chat with us on WhatsApp</a>
+    </div>
+  </div>
+
+</form>
+</div><!-- /form-wrap -->
+
+<script>
+// ═══════════════════════════════════
+// CONFIG
+// ═══════════════════════════════════
+const MAX_IMG = 10, MIN_IMG = 3, MAX_MB = 5;
+let selectedFiles = [];
+
+// ═══════════════════════════════════
+// HELPERS
+// ═══════════════════════════════════
+const $ = id => document.getElementById(id);
+
+// Upload photos to Supabase Storage and return public URLs
+async function uploadPhotos(files) {
+  const urls = [];
+  for (let i=0; i<files.length; i++) {
+    const file = files[i];
+    const ext  = file.name.split('.').pop().toLowerCase();
+    const path = `cars/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
+    // Update progress UI
+    $('submitBtn').querySelector('.btn-txt')&&($('submitBtn').querySelector('.btn-txt').textContent='Uploading photo '+(i+1)+' of '+files.length+'…');
+    const {error} = await sb.storage.from('car-photos').upload(path, file, {contentType:file.type, upsert:false});
+    if (error) { console.error('Upload error:',error); continue; }
+    const {data} = sb.storage.from('car-photos').getPublicUrl(path);
+    urls.push(data.publicUrl);
+  }
+  return urls;
+}
+
+function toast(msg, ok=false) {
+  const t = $('toast'); t.textContent=msg;
+  t.className = 'toast show' + (ok?' ok':'');
+  clearTimeout(toast._t);
+  toast._t = setTimeout(()=>t.classList.remove('show'), 3000);
+}
+
+// ═══════════════════════════════════
+// PRICE FORMATTER
+// ═══════════════════════════════════
+$('price').addEventListener('input', function() {
+  const v = parseInt(this.value);
+  const hint = $('price-hint').querySelector('span');
+  if (v > 0) {
+    hint.textContent = '≈ MWK ' + v.toLocaleString();
+    $('price-hint').className = 'fhint';
+  } else {
+    hint.textContent = '';
+  }
+});
+
+// ═══════════════════════════════════
+// DESCRIPTION CHAR COUNTER
+// ═══════════════════════════════════
+$('description').addEventListener('input', function() {
+  const len = this.value.length;
+  $('desc-count').textContent = `${len} / 1500`;
+  const hint = $('desc-hint');
+  if (len < 30) { hint.className='fhint err'; hint.querySelector('span').textContent='At least 30 characters'; }
+  else if (len > 1400) { hint.className='fhint warn'; hint.querySelector('span').textContent='Getting long…'; }
+  else { hint.className='fhint'; hint.querySelector('span').textContent='Looking good!'; }
+  updateStepper();
+});
+
+// ═══════════════════════════════════
+// STEPPER — mark steps done as user fills fields
+// ═══════════════════════════════════
+function updateStepper() {
+  const s1done = $('ownerName').value&&$('phone').value&&$('email').value&&$('location').value;
+  const s2done = $('make').value&&$('model').value&&$('price').value&&$('transmission').value&&$('fuelType').value&&$('condition').value;
+  const s3done = $('description').value.length >= 30;
+  const s5done = selectedFiles.length >= MIN_IMG;
+  if (s1done)  { $('step1').className='step done'; $('step1').querySelector('.step-num').innerHTML='<i class="fas fa-check" style="font-size:.55rem"></i>'; }
+  else           $('step1').className='step active';
+  $('step2').className = s1done ? (s2done?'step done':'step active') : 'step';
+  $('step3').className = s2done ? (s3done?'step done':'step active') : 'step';
+  $('step4').className = s3done ? 'step active' : 'step';
+  $('step5').className = s5done ? 'step done'   : (s3done?'step active':'step');
+  if (s1done && $('step1').querySelector('.step-num').innerHTML !== '<i class="fas fa-check" style="font-size:.55rem"></i>')
+    $('step1').querySelector('.step-num').innerHTML = '<i class="fas fa-check" style="font-size:.55rem"></i>';
+}
+
+['ownerName','phone','email','location','make','model','price',
+ 'transmission','fuelType','condition'].forEach(id => {
+  $(id) && $(id).addEventListener('input', updateStepper);
+  $(id) && $(id).addEventListener('change', updateStepper);
+});
+
+// ═══════════════════════════════════
+// PHOTO UPLOAD
+// ═══════════════════════════════════
+const zone = $('uploadZone');
+const fileIn = $('carImagesInput');
+
+zone.addEventListener('click', () => fileIn.click());
+zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('drag-over'); });
+zone.addEventListener('dragleave', () => zone.classList.remove('drag-over'));
+zone.addEventListener('drop', e => {
+  e.preventDefault(); zone.classList.remove('drag-over');
+  handleFiles(Array.from(e.dataTransfer.files));
+});
+fileIn.addEventListener('change', e => handleFiles(Array.from(e.target.files)));
+
+function handleFiles(files) {
+  const imgs = files.filter(f => f.type.startsWith('image/'));
+  const tooBig = imgs.filter(f => f.size > MAX_MB*1024*1024);
+  if (tooBig.length) {
+    toast(`${tooBig.length} file(s) exceed ${MAX_MB}MB and were skipped`);
+    imgs.splice(imgs.findIndex(f => f.size > MAX_MB*1024*1024), tooBig.length);
+  }
+  const available = MAX_IMG - selectedFiles.length;
+  if (imgs.length > available) {
+    toast(`Max ${MAX_IMG} photos — only ${available} more added`);
+    imgs.splice(available);
+  }
+  selectedFiles = [...selectedFiles, ...imgs];
+  renderPreviews();
+  updateStepper();
+}
+
+function removeFile(idx) {
+  selectedFiles.splice(idx, 1);
+  renderPreviews();
+  updateStepper();
+  toast('Photo removed');
+}
+
+function renderPreviews() {
+  const count = selectedFiles.length;
+  $('imgCount').textContent = count;
+  $('imgStatus').textContent = `${count} / ${MIN_IMG} min`;
+
+  // progress bar
+  const pct = Math.min(count / MIN_IMG * 100, 100);
+  const bar = $('photoBarFill');
+  bar.style.width = pct + '%';
+  bar.className = 'photo-bar-fill' + (count >= MIN_IMG ? ' ok' : '');
+
+  // notice
+  const notice = $('photoNotice');
+  if (count === 0) {
+    notice.className = 'photo-notice show';
+    notice.textContent = `Please upload at least ${MIN_IMG} photos of your vehicle`;
+  } else if (count < MIN_IMG) {
+    notice.className = 'photo-notice show';
+    notice.textContent = `${MIN_IMG - count} more photo${MIN_IMG-count>1?'s':''} needed (${count}/${MIN_IMG})`;
+  } else if (count >= MAX_IMG) {
+    notice.className = 'photo-notice ok-notice show';
+    notice.textContent = `✓ Maximum ${MAX_IMG} photos reached — great coverage!`;
+  } else {
+    notice.className = 'photo-notice ok-notice show';
+    notice.textContent = `✓ ${count} photos ready — you can add up to ${MAX_IMG - count} more`;
+  }
+
+  // previews
+  const grid = $('imgPreview');
+  grid.innerHTML = '';
+  selectedFiles.forEach((file, i) => {
+    const reader = new FileReader();
+    reader.onload = e => {
+      const item = document.createElement('div');
+      item.className = 'prev-item';
+      item.innerHTML = `
+        <img src="${e.target.result}" alt="Photo ${i+1}">
+        <div class="order-badge ${i===0?'first':''}">${i+1}</div>
+        <button class="rmv-btn" type="button" onclick="removeFile(${i})" title="Remove">×</button>`;
+      grid.appendChild(item);
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+// init notice
+renderPreviews();
+
+// ═══════════════════════════════════
+// VALIDATION
+// ═══════════════════════════════════
+function validateField(id, cond, errId) {
+  const el  = $(id);
+  const err = $(errId);
+  if (!cond) {
+    el.classList.add('error');
+    err && err.classList.add('show');
+    return false;
+  }
+  el.classList.remove('error');
+  err && err.classList.remove('show');
+  return true;
+}
+
+// Inline validation on blur
+const vRules = [
+  ['ownerName', () => $('ownerName').value.trim().length >= 2, 'err-ownerName'],
+  ['phone',     () => $('phone').value.trim().length >= 7,     'err-phone'],
+  ['email',     () => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test($('email').value.trim()), 'err-email'],
+  ['location',  () => $('location').value.trim().length >= 2,  'err-location'],
+  ['make',      () => $('make').value.trim().length >= 1,       'err-make'],
+  ['model',     () => $('model').value.trim().length >= 1,      'err-model'],
+  ['price',     () => parseFloat($('price').value) > 0,         'err-price'],
+  ['transmission',()=>$('transmission').value !== '',            'err-transmission'],
+  ['fuelType',  () => $('fuelType').value !== '',               'err-fuelType'],
+  ['condition', () => $('condition').value !== '',              'err-condition'],
+  ['description',()=>$('description').value.trim().length>=30,  'err-description'],
+];
+vRules.forEach(([id,,errId]) => {
+  const el = $(id);
+  el && el.addEventListener('blur', () => {
+    const rule = vRules.find(r=>r[0]===id);
+    if (rule) validateField(id, rule[1](), errId);
+  });
+});
+
+function validateAll() {
+  let ok = true;
+  vRules.forEach(([id, cond, errId]) => {
+    if (!validateField(id, cond(), errId)) ok = false;
+  });
+  return ok;
+}
+
+// fileToBase64 removed — photos now upload to Supabase Storage
+
+
+// ═══════════════════════════════════
+// SUBMIT
+// ═══════════════════════════════════
+$('sellForm').addEventListener('submit', async function(e) {
+  e.preventDefault();
+
+  // 1. Validate fields
+  if (!validateAll()) {
+    toast('Please fill in all required fields');
+    // scroll to first error
+    const firstErr = document.querySelector('.finput.error');
+    if (firstErr) firstErr.scrollIntoView({behavior:'smooth', block:'center'});
+    return;
+  }
+
+  // 2. Validate photos
+  if (selectedFiles.length < MIN_IMG) {
+    toast(`Please upload at least ${MIN_IMG} photos`);
+    $('sec-5').scrollIntoView({behavior:'smooth', block:'start'});
+    return;
+  }
+
+  // 3. Disable submit, show loading
+  const btn = $('submitBtn');
+  btn.classList.add('loading');
+
+  try {
+    // 4. Upload photos to Supabase Storage → get public CDN URLs
+    const imageUrls = await uploadPhotos(selectedFiles);
+    if (imageUrls.length < MIN_IMG) {
+      btn.classList.remove('loading');
+      toast('Photo upload failed. Please check your connection and try again.');
+      return;
+    }
+
+    // 5. Gather form data (snake_case for Supabase)
+    const features = [...document.querySelectorAll('input[name="features"]:checked')].map(c=>c.value);
+    const carData = {
+      make:         $('make').value.trim(),
+      model:        $('model').value.trim(),
+      year:         parseInt($('year').value)||new Date().getFullYear(),
+      price:        parseFloat($('price').value),
+      mileage:      parseFloat($('mileage').value)||0,
+      transmission: $('transmission').value,
+      fuel:         $('fuelType').value,
+      body_type:    $('bodyType').value||'',
+      color:        $('color').value.trim()||'',
+      condition:    $('condition').value,
+      description:  $('description').value.trim(),
+      location:     $('location').value.trim(),
+      phone:        $('phone').value.trim(),
+      email:        $('email').value.trim(),
+      owner_name:   $('ownerName').value.trim(),
+      features:     features,
+      images:       imageUrls,
+      featured:     false,
+    };
+
+    // 6. Save to Supabase — visible on ALL devices instantly
+    const {data, error} = await sb.from('car_listings').insert([carData]).select().single();
+    if (error) throw error;
+
+    // 7. Show success screen
+    $('s-car-name').textContent = `${carData.year} ${carData.make} ${carData.model}`;
+    $('successOverlay').classList.add('show');
+
+    // 8. Redirect after 3s
+    setTimeout(() => { window.location.href = 'listings.html'; }, 3000);
+
+  } catch(err) {
+    console.error(err);
+    btn.classList.remove('loading');
+    toast('Something went wrong: '+(err.message||'please try again'));
+  }
+});
+
+// ═══════════════════════════════════
+// SCROLL & MISC
+// ═══════════════════════════════════
+window.addEventListener('scroll', () =>
+  $('hdr').classList.toggle('scrolled', window.scrollY > 60)
+);
+
+// Scroll to section on stepper click
+[1,2,3,4,5].forEach(n => {
+  $('step'+n) && $('step'+n).addEventListener('click', () => {
+    $('sec-'+n) && $('sec-'+n).scrollIntoView({behavior:'smooth', block:'start'});
+  });
+});
+</script>
+</body>
+</html>

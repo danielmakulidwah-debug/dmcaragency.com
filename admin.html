@@ -1,0 +1,1702 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin — DM Car Agency</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=Oswald:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+/* ═══════════════════════ TOKENS ═══════════════════════ */
+:root {
+  --ink:#0a0a0a; --ink2:#0f0f0f; --ink3:#161616; --ink4:#1e1e1e; --ink5:#252525;
+  --border:rgba(255,255,255,.07); --border2:rgba(255,255,255,.04);
+  --linen:#f0ede8; --mist:#888; --fog:#555; --dim:#333;
+  --white:#fff;
+  --flame:#e8491d; --flame-a:rgba(232,73,29,.12); --flame-b:rgba(232,73,29,.06);
+  --gold:#c8973a;  --gold-a:rgba(200,151,58,.12);
+  --green:#27ae60; --green-a:rgba(39,174,96,.12);
+  --red:#e74c3c;   --red-a:rgba(231,76,60,.12);
+  --blue:#3498db;  --blue-a:rgba(52,152,219,.12);
+  --wa:#25D366;    --wa-a:rgba(37,211,102,.1);
+  --fh:'Oswald',sans-serif; --fb:'DM Sans',sans-serif;
+  --ease:cubic-bezier(.22,1,.36,1);
+  --r:5px; --sidebar:240px;
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%;overflow:hidden}
+body{font-family:var(--fb);background:var(--ink);color:var(--linen);
+  display:flex;flex-direction:column}
+::-webkit-scrollbar{width:3px;height:3px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--dim);border-radius:2px}
+a{color:inherit;text-decoration:none}
+button{font-family:var(--fb);cursor:pointer}
+input,select,textarea{font-family:var(--fb)}
+
+/* ═══════════════════════ LOGIN ═══════════════════════ */
+#loginScreen{
+  position:fixed;inset:0;z-index:9999;
+  background:var(--ink);
+  display:flex;align-items:center;justify-content:center;
+  flex-direction:column;gap:2rem;
+}
+.login-box{
+  background:var(--ink3);border:1px solid var(--border);
+  border-radius:var(--r);padding:3rem 2.5rem;
+  width:100%;max-width:380px;text-align:center;
+}
+.login-logo{font-family:var(--fh);font-size:1.4rem;letter-spacing:3px;
+  color:var(--white);margin-bottom:.25rem}
+.login-logo span{color:var(--flame)}
+.login-sub{color:var(--fog);font-size:.78rem;letter-spacing:2px;
+  text-transform:uppercase;margin-bottom:2rem}
+.login-label{display:block;text-align:left;font-family:var(--fh);
+  font-size:.6rem;letter-spacing:3px;text-transform:uppercase;
+  color:var(--mist);margin-bottom:.5rem}
+.login-input{
+  width:100%;background:var(--ink2);border:1px solid var(--border);
+  color:var(--linen);padding:12px 14px;border-radius:var(--r);
+  font-size:.95rem;transition:border-color .2s;margin-bottom:1.25rem;
+}
+.login-input:focus{outline:none;border-color:var(--flame);
+  box-shadow:0 0 0 3px var(--flame-b)}
+.login-btn{
+  width:100%;padding:12px;background:var(--flame);color:#fff;
+  border:none;border-radius:var(--r);font-family:var(--fh);
+  font-size:.78rem;letter-spacing:3px;text-transform:uppercase;
+  font-weight:600;transition:all .25s;
+}
+.login-btn:hover{background:#ff5a30;transform:translateY(-1px)}
+.login-err{color:var(--red);font-size:.78rem;margin-top:.5rem;display:none}
+
+/* ═══════════════════════ LAYOUT ═══════════════════════ */
+#app{display:none;height:100%;flex-direction:column}
+.topbar{
+  height:52px;flex-shrink:0;
+  background:var(--ink2);border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 1.5rem;z-index:100;
+}
+.topbar-left{display:flex;align-items:center;gap:1rem}
+.topbar-logo{font-family:var(--fh);font-size:1rem;letter-spacing:3px;
+  text-transform:uppercase;color:var(--white)}
+.topbar-logo span{color:var(--flame)}
+.topbar-badge{
+  padding:.2rem .6rem;background:var(--flame-a);
+  border:1px solid rgba(232,73,29,.2);border-radius:2px;
+  font-family:var(--fh);font-size:.55rem;letter-spacing:2px;
+  text-transform:uppercase;color:var(--flame);
+}
+.topbar-right{display:flex;align-items:center;gap:.75rem}
+.topbar-time{font-size:.75rem;color:var(--fog)}
+.tb-btn{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:6px 12px;border-radius:var(--r);
+  font-size:.7rem;letter-spacing:1px;border:1px solid var(--border);
+  color:var(--mist);transition:all .2s;background:transparent;
+}
+.tb-btn:hover{border-color:var(--flame);color:var(--flame)}
+.tb-btn.wa-btn{border-color:rgba(37,211,102,.2);color:var(--wa)}
+.tb-btn.wa-btn:hover{background:var(--wa-a)}
+
+.body{display:flex;flex:1;overflow:hidden}
+
+/* ─── SIDEBAR ─── */
+.sidebar{
+  width:var(--sidebar);flex-shrink:0;
+  background:var(--ink2);border-right:1px solid var(--border);
+  display:flex;flex-direction:column;overflow-y:auto;
+  padding:.75rem 0;
+}
+.nav-section{padding:.5rem 1rem .25rem;
+  font-family:var(--fh);font-size:.5rem;letter-spacing:3px;
+  text-transform:uppercase;color:var(--dim)}
+.nav-item{
+  display:flex;align-items:center;gap:.75rem;
+  padding:.7rem 1.25rem;cursor:pointer;transition:all .2s;
+  font-size:.82rem;color:var(--fog);position:relative;
+  border-left:2px solid transparent;
+}
+.nav-item:hover{background:var(--ink3);color:var(--linen)}
+.nav-item.active{background:var(--ink3);color:var(--white);
+  border-left-color:var(--flame)}
+.nav-item i{width:16px;text-align:center;font-size:.85rem}
+.nav-badge{
+  margin-left:auto;min-width:18px;height:18px;
+  background:var(--flame);color:#fff;
+  border-radius:9px;font-size:.6rem;font-weight:700;
+  display:flex;align-items:center;justify-content:center;
+  padding:0 5px;
+}
+.nav-badge.green{background:var(--green)}
+.nav-sep{height:1px;background:var(--border);margin:.5rem 1rem}
+.sidebar-footer{margin-top:auto;padding:1rem;
+  border-top:1px solid var(--border)}
+.site-links{display:flex;flex-direction:column;gap:.4rem}
+.site-link{
+  display:flex;align-items:center;gap:.6rem;
+  padding:.5rem .75rem;border-radius:var(--r);
+  font-size:.75rem;color:var(--fog);transition:all .2s;
+}
+.site-link:hover{background:var(--ink3);color:var(--linen)}
+.site-link i{font-size:.7rem;width:14px;text-align:center}
+
+/* ─── MAIN CONTENT ─── */
+.main{flex:1;overflow-y:auto;padding:2rem}
+.panel{display:none}
+.panel.active{display:block;animation:panIn .3s var(--ease)}
+@keyframes panIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+.panel-header{margin-bottom:2rem}
+.panel-title{font-family:var(--fh);font-size:1.4rem;letter-spacing:2px;
+  text-transform:uppercase;color:var(--white);margin-bottom:.25rem}
+.panel-sub{color:var(--fog);font-size:.82rem}
+
+/* ─── STAT CARDS ─── */
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+  gap:1px;background:var(--border2);border-radius:var(--r);
+  overflow:hidden;border:1px solid var(--border);margin-bottom:2rem}
+.stat-card{background:var(--ink3);padding:1.5rem 1.25rem;
+  display:flex;flex-direction:column;gap:.5rem;transition:background .2s}
+.stat-card:hover{background:var(--ink4)}
+.stat-label{font-family:var(--fh);font-size:.55rem;letter-spacing:3px;
+  text-transform:uppercase;color:var(--mist)}
+.stat-value{font-family:var(--fh);font-size:2.2rem;font-weight:700;
+  color:var(--white);line-height:1}
+.stat-value span{font-size:1rem;color:var(--mist)}
+.stat-change{font-size:.72rem;display:flex;align-items:center;gap:4px}
+.stat-change.up{color:var(--green)}
+.stat-change.fl{color:var(--mist)}
+.stat-ico{
+  width:36px;height:36px;border-radius:var(--r);
+  display:flex;align-items:center;justify-content:center;
+  font-size:.9rem;margin-bottom:.25rem;
+}
+
+/* ─── TWO COL ─── */
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-bottom:2rem}
+@media(max-width:1100px){.two-col{grid-template-columns:1fr}}
+
+/* ─── CARD ─── */
+.card{background:var(--ink3);border:1px solid var(--border);
+  border-radius:var(--r);overflow:hidden}
+.card-head{
+  padding:1rem 1.25rem;border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;
+}
+.card-head-title{font-family:var(--fh);font-size:.7rem;letter-spacing:2px;
+  text-transform:uppercase;color:var(--white)}
+.card-head-action{font-size:.7rem;color:var(--flame);cursor:pointer;
+  transition:opacity .2s}
+.card-head-action:hover{opacity:.7}
+.card-body{padding:1.25rem}
+
+/* Activity feed */
+.activity-list{display:flex;flex-direction:column;gap:0}
+.act-item{
+  display:flex;align-items:flex-start;gap:.875rem;
+  padding:.875rem 0;border-bottom:1px solid var(--border2);
+}
+.act-item:last-child{border-bottom:none}
+.act-dot{
+  width:8px;height:8px;border-radius:50%;flex-shrink:0;margin-top:5px;
+}
+.act-dot.flame{background:var(--flame)}
+.act-dot.green{background:var(--green)}
+.act-dot.gold{background:var(--gold)}
+.act-dot.blue{background:var(--blue)}
+.act-text{font-size:.8rem;color:var(--linen);line-height:1.5}
+.act-time{font-size:.7rem;color:var(--fog);margin-top:2px}
+
+/* ─── TABLE ─── */
+.tbl-wrap{overflow-x:auto}
+.tbl-toolbar{
+  display:flex;align-items:center;gap:.75rem;
+  padding:1rem 1.25rem;border-bottom:1px solid var(--border);
+  flex-wrap:wrap;
+}
+.search-box{
+  display:flex;align-items:center;gap:.5rem;flex:1;min-width:160px;
+  background:var(--ink2);border:1px solid var(--border);
+  border-radius:var(--r);padding:7px 12px;
+}
+.search-box i{color:var(--fog);font-size:.8rem}
+.search-box input{background:transparent;border:none;color:var(--linen);
+  font-size:.82rem;width:100%;outline:none}
+.search-box input::placeholder{color:var(--fog)}
+.tbl-filter{
+  padding:7px 12px;background:var(--ink2);
+  border:1px solid var(--border);border-radius:var(--r);
+  color:var(--mist);font-size:.78rem;outline:none;
+}
+.tbl-filter option{background:var(--ink3)}
+.tbl-count{font-size:.75rem;color:var(--fog);margin-left:auto;white-space:nowrap}
+table{width:100%;border-collapse:collapse;font-size:.8rem}
+thead tr{border-bottom:1px solid var(--border)}
+th{padding:.75rem 1rem;text-align:left;font-family:var(--fh);
+  font-size:.58rem;letter-spacing:2px;text-transform:uppercase;
+  color:var(--fog);font-weight:500;white-space:nowrap}
+td{padding:.75rem 1rem;border-bottom:1px solid var(--border2);
+  color:var(--linen);vertical-align:middle}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:var(--ink4)}
+.car-thumb{
+  width:52px;height:40px;object-fit:cover;border-radius:4px;
+  background:var(--ink2);display:block;
+}
+.car-thumb-placeholder{
+  width:52px;height:40px;border-radius:4px;
+  background:var(--ink2);display:flex;align-items:center;justify-content:center;
+  color:var(--dim);font-size:.9rem;
+}
+.car-name{font-weight:500;color:var(--white);margin-bottom:2px}
+.car-meta{color:var(--fog);font-size:.72rem}
+
+/* badges / tags */
+.tag{display:inline-flex;align-items:center;gap:4px;
+  padding:.2rem .6rem;border-radius:2px;
+  font-family:var(--fh);font-size:.58rem;letter-spacing:1px;text-transform:uppercase}
+.tag.featured{background:rgba(200,151,58,.15);color:var(--gold);
+  border:1px solid rgba(200,151,58,.25)}
+.tag.active{background:var(--green-a);color:var(--green);
+  border:1px solid rgba(39,174,96,.2)}
+.tag.pending{background:rgba(200,151,58,.1);color:var(--gold);
+  border:1px solid rgba(200,151,58,.2)}
+.tag.rejected{background:var(--red-a);color:var(--red);
+  border:1px solid rgba(231,76,60,.2)}
+.tag.approved{background:var(--green-a);color:var(--green);
+  border:1px solid rgba(39,174,96,.2)}
+.tag.new{background:var(--blue-a);color:var(--blue);
+  border:1px solid rgba(52,152,219,.2)}
+
+/* action buttons */
+.acts{display:flex;align-items:center;gap:.35rem}
+.act-btn{
+  width:30px;height:30px;border-radius:4px;border:1px solid var(--border);
+  background:transparent;color:var(--mist);transition:all .2s;
+  display:flex;align-items:center;justify-content:center;font-size:.75rem;
+}
+.act-btn:hover{border-color:var(--linen);color:var(--linen)}
+.act-btn.star:hover,.act-btn.star.on{border-color:var(--gold);color:var(--gold);background:var(--gold-a)}
+.act-btn.del:hover{border-color:var(--red);color:var(--red);background:var(--red-a)}
+.act-btn.approve:hover,.act-btn.approve.on{border-color:var(--green);color:var(--green);background:var(--green-a)}
+.act-btn.reject:hover,.act-btn.reject.on{border-color:var(--red);color:var(--red);background:var(--red-a)}
+.act-btn.wa:hover{border-color:var(--wa);color:var(--wa);background:var(--wa-a)}
+.act-btn.edit:hover{border-color:var(--blue);color:var(--blue);background:var(--blue-a)}
+
+/* empty state */
+.empty-state{
+  padding:3rem;text-align:center;color:var(--fog);
+}
+.empty-state i{font-size:2.5rem;color:var(--dim);display:block;margin-bottom:1rem}
+.empty-state p{font-size:.85rem}
+
+/* engagement */
+.eng-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:1rem}
+.eng-card{
+  background:var(--ink3);border:1px solid var(--border);
+  border-radius:var(--r);overflow:hidden;
+}
+.eng-card-head{
+  padding:1rem 1.25rem;border-bottom:1px solid var(--border);
+  display:flex;align-items:center;gap:.875rem;
+}
+.eng-thumb{
+  width:48px;height:36px;object-fit:cover;border-radius:3px;
+  background:var(--ink2);flex-shrink:0;
+}
+.eng-thumb-ph{width:48px;height:36px;border-radius:3px;
+  background:var(--ink2);flex-shrink:0;display:flex;
+  align-items:center;justify-content:center;color:var(--dim);font-size:.8rem}
+.eng-info h4{font-size:.82rem;color:var(--white);margin-bottom:2px}
+.eng-info p{font-size:.7rem;color:var(--fog)}
+.eng-stats{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:1px;
+  background:var(--border2);
+}
+.eng-stat{background:var(--ink4);padding:.75rem;text-align:center}
+.eng-stat-val{font-family:var(--fh);font-size:1.3rem;color:var(--white);line-height:1}
+.eng-stat-lbl{font-size:.62rem;color:var(--fog);margin-top:3px;letter-spacing:1px}
+.eng-comments{padding:1rem 1.25rem;max-height:160px;overflow-y:auto}
+.eng-comment{
+  padding:.5rem 0;border-bottom:1px solid var(--border2);
+  font-size:.75rem;
+}
+.eng-comment:last-child{border-bottom:none}
+.eng-comment-name{color:var(--gold);font-weight:600;margin-bottom:2px}
+.eng-comment-text{color:var(--mist);line-height:1.5}
+.eng-comment-del{float:right;color:var(--dim);cursor:pointer;font-size:.65rem;
+  transition:color .2s}
+.eng-comment-del:hover{color:var(--red)}
+
+/* settings */
+.settings-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem}
+@media(max-width:900px){.settings-grid{grid-template-columns:1fr}}
+.setting-group{display:flex;flex-direction:column;gap:.5rem;margin-bottom:1.25rem}
+.setting-label{font-family:var(--fh);font-size:.6rem;letter-spacing:3px;
+  text-transform:uppercase;color:var(--mist)}
+.setting-input{
+  background:var(--ink2);border:1px solid var(--border);
+  color:var(--linen);padding:11px 13px;border-radius:var(--r);
+  font-size:.88rem;transition:border-color .2s;
+}
+.setting-input:focus{outline:none;border-color:var(--flame);
+  box-shadow:0 0 0 3px var(--flame-b)}
+.setting-hint{font-size:.72rem;color:var(--fog);line-height:1.5}
+.setting-btn{
+  display:inline-flex;align-items:center;gap:7px;
+  padding:.7rem 1.25rem;border-radius:var(--r);
+  font-family:var(--fh);font-size:.7rem;letter-spacing:2px;
+  text-transform:uppercase;font-weight:600;
+  border:1px solid var(--border);color:var(--mist);
+  transition:all .25s;background:transparent;
+}
+.setting-btn.flame{background:var(--flame);border-color:var(--flame);color:#fff}
+.setting-btn.flame:hover{background:#ff5a30;transform:translateY(-1px)}
+.setting-btn.green{background:var(--green);border-color:var(--green);color:#fff}
+.setting-btn.green:hover{background:#2ecc71;transform:translateY(-1px)}
+.setting-btn.red{border-color:rgba(231,76,60,.3);color:var(--red)}
+.setting-btn.red:hover{background:var(--red-a)}
+.danger-zone{
+  margin-top:1rem;padding:1.25rem;
+  background:rgba(231,76,60,.04);border:1px solid rgba(231,76,60,.15);
+  border-radius:var(--r);
+}
+.danger-zone h4{font-family:var(--fh);font-size:.65rem;letter-spacing:2px;
+  text-transform:uppercase;color:var(--red);margin-bottom:.75rem}
+
+/* ─── MODAL ─── */
+.modal-bg{
+  position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:1000;
+  display:none;align-items:center;justify-content:center;
+  backdrop-filter:blur(4px);padding:1rem;
+}
+.modal-bg.open{display:flex}
+.modal{
+  background:var(--ink3);border:1px solid var(--border);
+  border-radius:var(--r);width:100%;max-width:560px;
+  max-height:90vh;overflow-y:auto;
+  animation:modalIn .3s var(--ease);
+}
+@keyframes modalIn{from{opacity:0;transform:scale(.95) translateY(10px)}to{opacity:1;transform:scale(1) translateY(0)}}
+.modal-head{
+  padding:1.25rem 1.5rem;border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;
+}
+.modal-title{font-family:var(--fh);font-size:.82rem;letter-spacing:2px;
+  text-transform:uppercase;color:var(--white)}
+.modal-close{background:none;border:none;color:var(--mist);font-size:1rem;
+  cursor:pointer;transition:color .2s;padding:4px}
+.modal-close:hover{color:var(--flame)}
+.modal-body{padding:1.5rem}
+.modal-row{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem}
+.modal-group{display:flex;flex-direction:column;gap:.4rem;margin-bottom:1rem}
+.modal-group.full{grid-column:1/-1}
+.modal-label{font-family:var(--fh);font-size:.58rem;letter-spacing:3px;
+  text-transform:uppercase;color:var(--mist)}
+.modal-input{
+  background:var(--ink2);border:1px solid var(--border);
+  color:var(--linen);padding:10px 12px;border-radius:var(--r);
+  font-size:.85rem;
+}
+.modal-input:focus{outline:none;border-color:var(--flame)}
+.modal-input option{background:var(--ink3)}
+.modal-footer{
+  padding:1.25rem 1.5rem;border-top:1px solid var(--border);
+  display:flex;gap:.75rem;justify-content:flex-end;
+}
+.modal-btn{
+  padding:.7rem 1.5rem;border-radius:var(--r);
+  font-family:var(--fh);font-size:.7rem;letter-spacing:2px;
+  text-transform:uppercase;font-weight:600;border:none;
+  cursor:pointer;transition:all .2s;
+}
+.modal-btn.cancel{background:transparent;border:1px solid var(--border);color:var(--mist)}
+.modal-btn.cancel:hover{border-color:var(--linen);color:var(--linen)}
+.modal-btn.save{background:var(--flame);color:#fff}
+.modal-btn.save:hover{background:#ff5a30}
+.modal-btn.danger{background:var(--red);color:#fff}
+
+/* ─── TOAST ─── */
+.toast{
+  position:fixed;bottom:1.5rem;right:1.5rem;z-index:9998;
+  background:var(--ink4);border:1px solid var(--border);
+  padding:10px 18px;border-radius:var(--r);font-size:.82rem;
+  color:var(--linen);opacity:0;visibility:hidden;
+  transition:all .3s var(--ease);
+  box-shadow:0 8px 32px rgba(0,0,0,.5);
+  display:flex;align-items:center;gap:.5rem;
+  max-width:320px;
+}
+.toast.show{opacity:1;visibility:visible;transform:translateY(-4px)}
+.toast i.ok{color:var(--green)}
+.toast i.err{color:var(--red)}
+.toast i.info{color:var(--gold)}
+
+/* ─── MISC ─── */
+.price{font-family:var(--fh);color:var(--gold);font-size:.85rem}
+.num{font-family:var(--fh);font-size:.82rem;color:var(--white)}
+.mini-bar{
+  height:3px;background:var(--border);border-radius:2px;
+  margin-top:.3rem;overflow:hidden;
+}
+.mini-bar-fill{height:100%;border-radius:2px;background:var(--flame);transition:width .6s var(--ease)}
+hr.divider{border:none;border-top:1px solid var(--border);margin:1.25rem 0}
+.pill-row{display:flex;flex-wrap:wrap;gap:.4rem}
+.pill{padding:.25rem .65rem;background:var(--ink5);border:1px solid var(--border);
+  border-radius:2px;font-size:.7rem;color:var(--mist)}
+
+/* ─── RESPONSIVE ─── */
+@media(max-width:900px){
+  .sidebar{display:none}
+  .mob-nav{display:flex}
+}
+.mob-nav{
+  display:none;height:52px;
+  background:var(--ink2);border-top:1px solid var(--border);
+  align-items:center;justify-content:space-around;
+  flex-shrink:0;
+}
+.mob-nav-item{
+  display:flex;flex-direction:column;align-items:center;gap:3px;
+  cursor:pointer;padding:.5rem;transition:color .2s;color:var(--fog);
+  font-size:.6rem;letter-spacing:1px;
+}
+.mob-nav-item i{font-size:1rem}
+.mob-nav-item.active{color:var(--flame)}
+</style>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+// ── SUPABASE CONFIG ──────────────────────────────
+const SUPABASE_URL  = 'https://ospebrnwdvhuituoyxlw.supabase.co';
+const SUPABASE_ANON = 'sb_publishable_k7BrujJj8-zWKaLoHr1gfA_WRn_KWlQ';
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
+// ─────────────────────────────────────────────────
+</script>
+</head>
+<body>
+
+<!-- ══════════════ LOGIN SCREEN ══════════════ -->
+<div id="loginScreen">
+  <div class="login-box">
+    <div class="login-logo"><span>DM</span> Car Agency</div>
+    <div class="login-sub">Admin Dashboard</div>
+    <label class="login-label" for="loginPass">Password</label>
+    <input class="login-input" type="password" id="loginPass"
+      placeholder="Enter admin password" onkeydown="if(event.key==='Enter')doLogin()">
+    <button class="login-btn" onclick="doLogin()">
+      <i class="fas fa-lock-open"></i> &nbsp;Access Dashboard
+    </button>
+    <div class="login-err" id="loginErr">Incorrect password. Try again.</div>
+    <p style="color:var(--dim);font-size:.72rem;margin-top:1.5rem">
+      Default password: <code style="color:var(--flame)">dm2025</code>
+    </p>
+  </div>
+</div>
+
+<!-- ══════════════ APP ══════════════ -->
+<div id="app">
+
+  <!-- TOP BAR -->
+  <div class="topbar">
+    <div class="topbar-left">
+      <div class="topbar-logo"><span>DM</span> Car Agency</div>
+      <div class="topbar-badge">Admin</div>
+    </div>
+    <div class="topbar-right">
+      <span class="topbar-time" id="clockEl"></span>
+      <a href="https://wa.me/265980717420" target="_blank" class="tb-btn wa-btn">
+        <i class="fab fa-whatsapp"></i> WhatsApp
+      </a>
+      <a href="index.html" target="_blank" class="tb-btn">
+        <i class="fas fa-external-link-alt"></i> View Site
+      </a>
+      <button class="tb-btn" onclick="logout()">
+        <i class="fas fa-sign-out-alt"></i> Logout
+      </button>
+    </div>
+  </div>
+
+  <div class="body">
+    <!-- SIDEBAR -->
+    <nav class="sidebar">
+      <div class="nav-section">Main</div>
+      <div class="nav-item active" onclick="showPanel('overview')">
+        <i class="fas fa-th-large"></i> Overview
+      </div>
+      <div class="nav-item" onclick="showPanel('listings')">
+        <i class="fas fa-car"></i> Car Listings
+        <span class="nav-badge" id="nb-listings">0</span>
+      </div>
+      <div class="nav-item" onclick="showPanel('applications')">
+        <i class="fas fa-users"></i> Applications
+        <span class="nav-badge green" id="nb-apps">0</span>
+      </div>
+      <div class="nav-item" onclick="showPanel('engagement')">
+        <i class="fas fa-chart-bar"></i> Engagement
+      </div>
+      <div class="nav-sep"></div>
+      <div class="nav-section">Config</div>
+      <div class="nav-item" onclick="showPanel('settings')">
+        <i class="fas fa-cog"></i> Settings
+      </div>
+      <div class="sidebar-footer">
+        <div class="site-links">
+          <a href="index.html" target="_blank" class="site-link">
+            <i class="fas fa-home"></i> Homepage
+          </a>
+          <a href="listings.html" target="_blank" class="site-link">
+            <i class="fas fa-list"></i> Listings
+          </a>
+          <a href="sell-car.html" target="_blank" class="site-link">
+            <i class="fas fa-tag"></i> Sell a Car
+          </a>
+          <a href="join-team.html" target="_blank" class="site-link">
+            <i class="fas fa-handshake"></i> Join Team
+          </a>
+        </div>
+      </div>
+    </nav>
+
+    <!-- MAIN -->
+    <div class="main" id="mainScroll">
+
+      <!-- ── OVERVIEW ── -->
+      <div class="panel active" id="panel-overview">
+        <div class="panel-header">
+          <div class="panel-title">Overview</div>
+          <div class="panel-sub">All activity across DM Car Agency</div>
+        </div>
+
+        <div class="stats-grid" id="overviewStats"></div>
+
+        <div class="two-col">
+          <div class="card">
+            <div class="card-head">
+              <span class="card-head-title">Recent Activity</span>
+              <span class="card-head-action" onclick="showPanel('listings')">View All →</span>
+            </div>
+            <div class="card-body">
+              <div class="activity-list" id="activityFeed"></div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-head">
+              <span class="card-head-title">Featured Cars</span>
+              <span class="card-head-action" onclick="showPanel('listings')">Manage →</span>
+            </div>
+            <div class="card-body">
+              <div id="featuredList"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="two-col">
+          <div class="card">
+            <div class="card-head">
+              <span class="card-head-title">Top Listings by Views</span>
+            </div>
+            <div class="card-body" id="topViewed"></div>
+          </div>
+          <div class="card">
+            <div class="card-head">
+              <span class="card-head-title">Recent Applications</span>
+              <span class="card-head-action" onclick="showPanel('applications')">View All →</span>
+            </div>
+            <div class="card-body">
+              <div class="activity-list" id="recentApps"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── LISTINGS ── -->
+      <div class="panel" id="panel-listings">
+        <div class="panel-header" style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:1rem">
+          <div>
+            <div class="panel-title">Car Listings</div>
+            <div class="panel-sub">Manage inventory — feature, approve, edit, delete</div>
+          </div>
+          <button class="setting-btn flame" onclick="openAddCar()">
+            <i class="fas fa-plus"></i> Add Car
+          </button>
+        </div>
+        <div class="card">
+          <div class="tbl-toolbar">
+            <div class="search-box">
+              <i class="fas fa-search"></i>
+              <input type="text" id="listingSearch" placeholder="Search make, model, location…" oninput="renderListings()">
+            </div>
+            <select class="tbl-filter" id="listingFilter" onchange="renderListings()">
+              <option value="">All Cars</option>
+              <option value="featured">Featured Only</option>
+              <option value="new">New (7 days)</option>
+            </select>
+            <span class="tbl-count" id="listingCount">— cars</span>
+          </div>
+          <div class="tbl-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th style="width:60px">Photo</th>
+                  <th>Vehicle</th>
+                  <th>Price</th>
+                  <th>Location</th>
+                  <th>Stats</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="listingsTbody"></tbody>
+            </table>
+            <div class="empty-state" id="listingsEmpty" style="display:none">
+              <i class="fas fa-car-side"></i>
+              <p>No car listings yet.<br>Add your first car or wait for submissions from sellers.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── APPLICATIONS ── -->
+      <div class="panel" id="panel-applications">
+        <div class="panel-header">
+          <div class="panel-title">Team Applications</div>
+          <div class="panel-sub">Review and manage agent applications</div>
+        </div>
+        <div class="card">
+          <div class="tbl-toolbar">
+            <div class="search-box">
+              <i class="fas fa-search"></i>
+              <input type="text" id="appSearch" placeholder="Search name, phone, location…" oninput="renderApps()">
+            </div>
+            <select class="tbl-filter" id="appFilter" onchange="renderApps()">
+              <option value="">All</option>
+              <option value="pending">Pending</option>
+              <option value="approved">Approved</option>
+              <option value="rejected">Rejected</option>
+            </select>
+            <span class="tbl-count" id="appCount">— applications</span>
+          </div>
+          <div class="tbl-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Applicant</th>
+                  <th>Contact</th>
+                  <th>Experience</th>
+                  <th>License</th>
+                  <th>Date</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="appsTbody"></tbody>
+            </table>
+            <div class="empty-state" id="appsEmpty" style="display:none">
+              <i class="fas fa-users"></i>
+              <p>No applications yet.<br>Applications from join-team.html will appear here.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── ENGAGEMENT ── -->
+      <div class="panel" id="panel-engagement">
+        <div class="panel-header">
+          <div class="panel-title">Engagement</div>
+          <div class="panel-sub">Views, likes, and comments across all listings</div>
+        </div>
+        <div class="stats-grid" id="engStats"></div>
+        <div class="eng-grid" id="engGrid"></div>
+        <div class="empty-state" id="engEmpty" style="display:none">
+          <i class="fas fa-chart-bar"></i>
+          <p>No engagement data yet.<br>Views and likes are tracked when visitors browse listings.</p>
+        </div>
+      </div>
+
+      <!-- ── SETTINGS ── -->
+      <div class="panel" id="panel-settings">
+        <div class="panel-header">
+          <div class="panel-title">Settings</div>
+          <div class="panel-sub">Admin configuration and data management</div>
+        </div>
+        <div class="settings-grid">
+
+          <div class="card">
+            <div class="card-head"><span class="card-head-title">Change Password</span></div>
+            <div class="card-body">
+              <div class="setting-group">
+                <label class="setting-label">Current Password</label>
+                <input class="setting-input" type="password" id="currPass" placeholder="Current password">
+              </div>
+              <div class="setting-group">
+                <label class="setting-label">New Password</label>
+                <input class="setting-input" type="password" id="newPass" placeholder="New password (min 6 chars)">
+              </div>
+              <div class="setting-group">
+                <label class="setting-label">Confirm New Password</label>
+                <input class="setting-input" type="password" id="confPass" placeholder="Repeat new password">
+              </div>
+              <button class="setting-btn flame" onclick="changePassword()">
+                <i class="fas fa-key"></i> Update Password
+              </button>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-head"><span class="card-head-title">Admin Contact</span></div>
+            <div class="card-body">
+              <div class="setting-group">
+                <label class="setting-label">Your WhatsApp Number</label>
+                <input class="setting-input" type="tel" id="adminPhone"
+                  placeholder="+265980717420">
+                <span class="setting-hint">Used for pre-filled WhatsApp messages on the site.</span>
+              </div>
+              <div class="setting-group">
+                <label class="setting-label">Agency Name</label>
+                <input class="setting-input" type="text" id="agencyName"
+                  placeholder="DM Car Agency">
+              </div>
+              <button class="setting-btn flame" onclick="saveSettings()">
+                <i class="fas fa-save"></i> Save Settings
+              </button>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-head"><span class="card-head-title">Export Data</span></div>
+            <div class="card-body">
+              <p style="color:var(--fog);font-size:.82rem;margin-bottom:1.25rem;line-height:1.65">
+                Download all site data as JSON files for backup or transfer.
+              </p>
+              <div style="display:flex;flex-direction:column;gap:.75rem">
+                <button class="setting-btn" onclick="exportData('dmcars_listings','car-listings')">
+                  <i class="fas fa-download"></i> Export Car Listings
+                </button>
+                <button class="setting-btn" onclick="exportData('dmcars_applications','team-applications')">
+                  <i class="fas fa-download"></i> Export Applications
+                </button>
+                <button class="setting-btn" onclick="exportData('dmcars_engagement','engagement-data')">
+                  <i class="fas fa-download"></i> Export Engagement Data
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-head"><span class="card-head-title">Danger Zone</span></div>
+            <div class="card-body">
+              <div class="danger-zone">
+                <h4><i class="fas fa-exclamation-triangle"></i> &nbsp;Destructive Actions</h4>
+                <div style="display:flex;flex-direction:column;gap:.75rem">
+                  <button class="setting-btn red" onclick="confirmClear('dmcars_listings','All car listings')">
+                    <i class="fas fa-trash"></i> Clear All Listings
+                  </button>
+                  <button class="setting-btn red" onclick="confirmClear('dmcars_applications','All applications')">
+                    <i class="fas fa-trash"></i> Clear All Applications
+                  </button>
+                  <button class="setting-btn red" onclick="confirmClear('dmcars_engagement','All engagement data')">
+                    <i class="fas fa-trash"></i> Clear Engagement Data
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </div><!-- /main -->
+  </div><!-- /body -->
+
+  <!-- Mobile nav -->
+  <nav class="mob-nav">
+    <div class="mob-nav-item active" onclick="showPanel('overview')">
+      <i class="fas fa-th-large"></i><span>Overview</span>
+    </div>
+    <div class="mob-nav-item" onclick="showPanel('listings')">
+      <i class="fas fa-car"></i><span>Cars</span>
+    </div>
+    <div class="mob-nav-item" onclick="showPanel('applications')">
+      <i class="fas fa-users"></i><span>Team</span>
+    </div>
+    <div class="mob-nav-item" onclick="showPanel('engagement')">
+      <i class="fas fa-chart-bar"></i><span>Stats</span>
+    </div>
+    <div class="mob-nav-item" onclick="showPanel('settings')">
+      <i class="fas fa-cog"></i><span>Settings</span>
+    </div>
+  </nav>
+
+</div><!-- /app -->
+
+<!-- ══════════ ADD/EDIT CAR MODAL ══════════ -->
+<div class="modal-bg" id="carModal">
+  <div class="modal">
+    <div class="modal-head">
+      <span class="modal-title" id="carModalTitle">Add Car</span>
+      <button class="modal-close" onclick="closeModal('carModal')">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="editCarId">
+      <div class="modal-row">
+        <div class="modal-group">
+          <label class="modal-label">Make *</label>
+          <input class="modal-input" id="cm-make" placeholder="Toyota">
+        </div>
+        <div class="modal-group">
+          <label class="modal-label">Model *</label>
+          <input class="modal-input" id="cm-model" placeholder="Fortuner">
+        </div>
+      </div>
+      <div class="modal-row">
+        <div class="modal-group">
+          <label class="modal-label">Year</label>
+          <input class="modal-input" type="number" id="cm-year" placeholder="2022">
+        </div>
+        <div class="modal-group">
+          <label class="modal-label">Price (MWK) *</label>
+          <input class="modal-input" type="number" id="cm-price" placeholder="50000000">
+        </div>
+      </div>
+      <div class="modal-row">
+        <div class="modal-group">
+          <label class="modal-label">Transmission</label>
+          <select class="modal-input" id="cm-trans">
+            <option value="Automatic">Automatic</option>
+            <option value="Manual">Manual</option>
+          </select>
+        </div>
+        <div class="modal-group">
+          <label class="modal-label">Fuel Type</label>
+          <select class="modal-input" id="cm-fuel">
+            <option value="Petrol">Petrol</option>
+            <option value="Diesel">Diesel</option>
+            <option value="Hybrid">Hybrid</option>
+            <option value="Electric">Electric</option>
+          </select>
+        </div>
+      </div>
+      <div class="modal-row">
+        <div class="modal-group">
+          <label class="modal-label">Body Type</label>
+          <select class="modal-input" id="cm-body">
+            <option value="">Not Specified</option>
+            <option value="SUV">SUV</option>
+            <option value="Sedan">Sedan</option>
+            <option value="Truck">Truck / Pickup</option>
+            <option value="Van">Van</option>
+            <option value="Hatchback">Hatchback</option>
+            <option value="Coupe">Coupe</option>
+          </select>
+        </div>
+        <div class="modal-group">
+          <label class="modal-label">Mileage (km)</label>
+          <input class="modal-input" type="number" id="cm-mileage" placeholder="45000">
+        </div>
+      </div>
+      <div class="modal-row">
+        <div class="modal-group">
+          <label class="modal-label">Color</label>
+          <input class="modal-input" id="cm-color" placeholder="White">
+        </div>
+        <div class="modal-group">
+          <label class="modal-label">Condition</label>
+          <select class="modal-input" id="cm-cond">
+            <option value="Excellent">Excellent</option>
+            <option value="Good">Good</option>
+            <option value="Fair">Fair</option>
+            <option value="Needs Repair">Needs Repair</option>
+          </select>
+        </div>
+      </div>
+      <div class="modal-row">
+        <div class="modal-group">
+          <label class="modal-label">Location</label>
+          <input class="modal-input" id="cm-loc" placeholder="Blantyre">
+        </div>
+        <div class="modal-group">
+          <label class="modal-label">Owner Phone</label>
+          <input class="modal-input" id="cm-phone" placeholder="+265 xxx">
+        </div>
+      </div>
+      <div class="modal-group">
+        <label class="modal-label">Description</label>
+        <textarea class="modal-input" id="cm-desc" rows="3"
+          placeholder="Vehicle description…" style="resize:vertical"></textarea>
+      </div>
+      <div style="display:flex;align-items:center;gap:1rem;margin-top:.5rem">
+        <label style="display:flex;align-items:center;gap:.5rem;cursor:pointer;font-size:.82rem;color:var(--mist)">
+          <input type="checkbox" id="cm-featured" style="accent-color:var(--gold)">
+          <span>⭐ Mark as Featured</span>
+        </label>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="modal-btn cancel" onclick="closeModal('carModal')">Cancel</button>
+      <button class="modal-btn save" onclick="saveCar()">Save Car</button>
+    </div>
+  </div>
+</div>
+
+<!-- VIEW APP MODAL -->
+<div class="modal-bg" id="appModal">
+  <div class="modal" style="max-width:500px">
+    <div class="modal-head">
+      <span class="modal-title">Application Details</span>
+      <button class="modal-close" onclick="closeModal('appModal')">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+    <div class="modal-body" id="appModalBody"></div>
+    <div class="modal-footer" id="appModalFoot"></div>
+  </div>
+</div>
+
+<!-- CONFIRM MODAL -->
+<div class="modal-bg" id="confirmModal">
+  <div class="modal" style="max-width:380px">
+    <div class="modal-head">
+      <span class="modal-title" style="color:var(--red)">Confirm Delete</span>
+      <button class="modal-close" onclick="closeModal('confirmModal')">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+    <div class="modal-body">
+      <p style="color:var(--mist);font-size:.88rem;line-height:1.65" id="confirmText">
+        Are you sure? This cannot be undone.
+      </p>
+    </div>
+    <div class="modal-footer">
+      <button class="modal-btn cancel" onclick="closeModal('confirmModal')">Cancel</button>
+      <button class="modal-btn danger" id="confirmOkBtn">Delete</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"><i id="toastIcon"></i><span id="toastMsg"></span></div>
+
+<script>
+// ═══════════════════════════════════════
+// CONSTANTS & HELPERS
+// ═══════════════════════════════════════
+const PASS_KEY = 'dmcars_admin_pass';
+const DEF_PASS = 'dm2025';
+const $ = id => document.getElementById(id);
+
+// Normalize Supabase fields
+function normCar(c) {
+  if (!c) return c;
+  return {...c,
+    createdAt: c.created_at ? new Date(c.created_at).getTime() : Date.now(),
+    ownerName: c.owner_name||c.ownerName||'',
+    body_type:  c.body_type||c.type||'',
+    type:       c.body_type||c.type||'',
+    images:     Array.isArray(c.images)?c.images:[],
+    features:   Array.isArray(c.features)?c.features:[],
+  };
+}
+function normApp(a) {
+  if (!a) return a;
+  return {...a,
+    firstName:   a.first_name||a.firstName||'',
+    lastName:    a.last_name ||a.lastName ||'',
+    submittedAt: a.created_at ? new Date(a.created_at).getTime() : Date.now(),
+    status:      a.status||'pending',
+  };
+}
+
+async function getCars() {
+  const {data,error} = await sb.from('car_listings').select('*').order('created_at',{ascending:false});
+  if(error){console.error(error);return[];}
+  return (data||[]).map(normCar);
+}
+async function getEng() {
+  // Engagement is now part of car_listings (views, likes) + car_comments
+  const {data} = await sb.from('car_listings').select('id,views,likes');
+  const {data:cmts} = await sb.from('car_comments').select('id,car_id,name,text,created_at').order('created_at',{ascending:true});
+  const eng={};
+  (data||[]).forEach(c=>{eng[c.id]={views:c.views||0,likes:c.likes||0,comments:[]};});
+  (cmts||[]).forEach(cm=>{if(eng[cm.car_id]) eng[cm.car_id].comments.push(cm);});
+  return eng;
+}
+async function getApps() {
+  const {data,error} = await sb.from('applications').select('*').order('created_at',{ascending:false});
+  if(error){console.error(error);return[];}
+  return (data||[]).map(normApp);
+}
+function getSettings(){ try{return JSON.parse(localStorage.getItem('dmcars_admin_settings'))||{phone:'265980717420',name:'DM Car Agency'}}catch{return{phone:'265980717420',name:'DM Car Agency'}} }
+function setSettings(s){ localStorage.setItem('dmcars_admin_settings',JSON.stringify(s)) }
+
+function fmtPrice(n){
+  const v=parseFloat(n)||0;
+  if(v>=1000000) return 'MWK '+(v/1000000).toFixed(1)+'M';
+  if(v>=1000)    return 'MWK '+(v/1000).toFixed(0)+'k';
+  return 'MWK '+v.toLocaleString();
+}
+function fmtDate(ts){
+  if(!ts)return '—';
+  const d=new Date(ts);
+  return d.toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'});
+}
+function timeAgo(ts){
+  if(!ts)return '';
+  const s=Math.floor((Date.now()-ts)/1000);
+  if(s<60)return 'just now';
+  if(s<3600)return Math.floor(s/60)+'m ago';
+  if(s<86400)return Math.floor(s/3600)+'h ago';
+  return Math.floor(s/86400)+'d ago';
+}
+function uid(){ return Date.now().toString(36)+Math.random().toString(36).slice(2,6) }
+
+let toastT;
+function toast(msg,type='ok'){
+  const i=$('toastIcon'); i.className=type;
+  i.style.color=type==='ok'?'var(--green)':type==='err'?'var(--red)':'var(--gold)';
+  i.className='fas '+(type==='ok'?'fa-check-circle':type==='err'?'fa-times-circle':'fa-info-circle');
+  $('toastMsg').textContent=msg;
+  const t=$('toast'); t.classList.add('show');
+  clearTimeout(toastT);
+  toastT=setTimeout(()=>t.classList.remove('show'),3000);
+}
+
+// ═══════════════════════════════════════
+// LOGIN
+// ═══════════════════════════════════════
+function getStoredPass(){ return localStorage.getItem(PASS_KEY)||DEF_PASS; }
+
+function doLogin(){
+  const val=$('loginPass').value.trim();
+  if(val===getStoredPass()){
+    $('loginScreen').style.display='none';
+    const a=$('app'); a.style.display='flex';
+    init();
+  } else {
+    $('loginErr').style.display='block';
+    $('loginPass').style.borderColor='var(--red)';
+    setTimeout(()=>{ $('loginErr').style.display='none'; $('loginPass').style.borderColor=''; },3000);
+  }
+}
+function logout(){
+  $('loginPass').value='';
+  $('app').style.display='none';
+  $('loginScreen').style.display='flex';
+}
+
+// ═══════════════════════════════════════
+// CLOCK
+// ═══════════════════════════════════════
+function updateClock(){
+  $('clockEl').textContent=new Date().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
+}
+setInterval(updateClock,1000); updateClock();
+
+// ═══════════════════════════════════════
+// NAVIGATION
+// ═══════════════════════════════════════
+let currentPanel='overview';
+function showPanel(name){
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  document.querySelectorAll('.mob-nav-item').forEach(n=>n.classList.remove('active'));
+  $('panel-'+name).classList.add('active');
+  // sidebar
+  const navItems=document.querySelectorAll('.nav-item');
+  navItems.forEach(n=>{ if(n.getAttribute('onclick')&&n.getAttribute('onclick').includes(name)) n.classList.add('active') });
+  // mob nav
+  const mobItems=document.querySelectorAll('.mob-nav-item');
+  mobItems.forEach(n=>{ if(n.getAttribute('onclick')&&n.getAttribute('onclick').includes(name)) n.classList.add('active') });
+  currentPanel=name;
+  $('mainScroll').scrollTop=0;
+  // render relevant panel
+  if(name==='overview')    renderOverview().catch(console.error);
+  if(name==='listings')    renderListings().catch(console.error);
+  if(name==='applications')renderApps().catch(console.error);
+  if(name==='engagement')  renderEngagement().catch(console.error);
+  if(name==='settings')    loadSettings();
+}
+
+// ═══════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════
+async function init(){
+  await updateBadges();
+  await renderOverview();
+  startRealtime();
+}
+async function updateBadges(){
+  const [cars,apps] = await Promise.all([getCars(),getApps()]);
+  $('nb-listings').textContent=cars.length;
+  const pending=apps.filter(a=>a.status==='pending').length;
+  $('nb-apps').textContent=pending||apps.length;
+}
+
+// ═══════════════════════════════════════
+// OVERVIEW
+// ═══════════════════════════════════════
+async function renderOverview(){
+  const [cars,apps,eng] = await Promise.all([getCars(),getApps(),getEng()]);
+  const featured=cars.filter(c=>c.featured).length;
+
+  let totalViews=0,totalLikes=0,totalComments=0;
+  Object.values(eng).forEach(e=>{
+    totalViews+=(e.views||0);
+    totalLikes+=(e.likes||0);
+    totalComments+=(e.comments||[]).length;
+  });
+
+  const statsData=[
+    {label:'Total Listings',val:cars.length,icon:'fa-car',color:'var(--flame)',bg:'var(--flame-a)'},
+    {label:'Featured Cars',val:featured,icon:'fa-star',color:'var(--gold)',bg:'var(--gold-a)'},
+    {label:'Applications',val:apps.length,icon:'fa-users',color:'var(--green)',bg:'var(--green-a)'},
+    {label:'Total Views',val:totalViews,icon:'fa-eye',color:'var(--blue)',bg:'var(--blue-a)'},
+    {label:'Total Likes',val:totalLikes,icon:'fa-heart',color:'var(--red)',bg:'var(--red-a)'},
+    {label:'Comments',val:totalComments,icon:'fa-comment',color:'var(--wa)',bg:'var(--wa-a)'},
+  ];
+  $('overviewStats').innerHTML=statsData.map(s=>`
+    <div class="stat-card">
+      <div class="stat-ico" style="background:${s.bg};color:${s.color}">
+        <i class="fas ${s.icon}"></i>
+      </div>
+      <div class="stat-value">${s.val}</div>
+      <div class="stat-label">${s.label}</div>
+    </div>`).join('');
+
+  // Activity feed — combine recent cars + apps, sort by date
+  const events=[];
+  cars.slice(0,5).forEach(c=>events.push({
+    ts:c.createdAt||0,
+    dot:'flame',
+    text:`<strong>${c.year||''} ${c.make} ${c.model}</strong> listed for ${fmtPrice(c.price)}`,
+    time:timeAgo(c.createdAt)
+  }));
+  apps.slice(-5).reverse().forEach(a=>events.push({
+    ts:a.submittedAt||0,
+    dot:'green',
+    text:`<strong>${a.firstName} ${a.lastName}</strong> applied to join the team`,
+    time:timeAgo(a.submittedAt)
+  }));
+  events.sort((a,b)=>b.ts-a.ts);
+  $('activityFeed').innerHTML = events.length
+    ? events.slice(0,8).map(e=>`
+      <div class="act-item">
+        <div class="act-dot ${e.dot}"></div>
+        <div>
+          <div class="act-text">${e.text}</div>
+          <div class="act-time">${e.time}</div>
+        </div>
+      </div>`).join('')
+    : '<div style="color:var(--fog);font-size:.82rem;padding:.5rem 0">No activity yet.</div>';
+
+  // Featured cars
+  const featuredCars=cars.filter(c=>c.featured);
+  $('featuredList').innerHTML = featuredCars.length
+    ? featuredCars.map(c=>`
+      <div style="display:flex;align-items:center;gap:.875rem;padding:.7rem 0;
+        border-bottom:1px solid var(--border2)">
+        ${c.images&&c.images[0]
+          ? `<img src="${c.images[0]}" class="car-thumb">`
+          : `<div class="car-thumb-placeholder"><i class="fas fa-car"></i></div>`}
+        <div style="flex:1;min-width:0">
+          <div class="car-name" style="font-size:.82rem">${c.year||''} ${c.make} ${c.model}</div>
+          <div class="price" style="font-size:.78rem">${fmtPrice(c.price)}</div>
+        </div>
+        <button class="act-btn star on" title="Unfeature" onclick="toggleFeatured('${c.id}')">
+          <i class="fas fa-star"></i>
+        </button>
+      </div>`).join('')
+    : '<div style="color:var(--fog);font-size:.82rem">No featured cars. Star a car in Listings to feature it on the homepage.</div>';
+
+  // Top by views
+  const withViews=cars.map(c=>({...c,views:(eng[c.id]?.views||0)}))
+    .sort((a,b)=>b.views-a.views).slice(0,5);
+  $('topViewed').innerHTML = withViews.length
+    ? withViews.map((c,i)=>`
+      <div style="display:flex;align-items:center;gap:.875rem;margin-bottom:.875rem">
+        <div style="font-family:var(--fh);font-size:.7rem;color:var(--fog);width:18px">${i+1}</div>
+        <div style="flex:1;min-width:0">
+          <div style="font-size:.82rem;color:var(--white)">${c.year||''} ${c.make} ${c.model}</div>
+          <div class="mini-bar"><div class="mini-bar-fill" style="width:${withViews[0].views?Math.round(c.views/withViews[0].views*100):0}%"></div></div>
+        </div>
+        <div class="num">${c.views}</div>
+      </div>`).join('')
+    : '<div style="color:var(--fog);font-size:.82rem">No view data yet.</div>';
+
+  // Recent apps
+  $('recentApps').innerHTML = apps.length
+    ? apps.slice(-5).reverse().map(a=>`
+      <div class="act-item">
+        <div class="act-dot green"></div>
+        <div>
+          <div class="act-text"><strong>${a.firstName} ${a.lastName}</strong> — ${a.experience||'?'} yrs exp</div>
+          <div class="act-time">${fmtDate(a.submittedAt)} · ${a.phone||''}</div>
+        </div>
+      </div>`).join('')
+    : '<div style="color:var(--fog);font-size:.82rem">No applications yet.</div>';
+}
+
+// ═══════════════════════════════════════
+// LISTINGS
+// ═══════════════════════════════════════
+async function renderListings(){
+  const [carsRaw,eng] = await Promise.all([getCars(),getEng()]);
+  let cars=carsRaw;
+  const q=($('listingSearch').value||'').toLowerCase();
+  const f=$('listingFilter').value;
+  if(q) cars=cars.filter(c=>[c.make,c.model,c.location,c.ownerName]
+    .join(' ').toLowerCase().includes(q));
+  if(f==='featured') cars=cars.filter(c=>c.featured);
+  if(f==='new') cars=cars.filter(c=>c.createdAt&&Date.now()-c.createdAt<7*864e5);
+
+  $('listingCount').textContent=cars.length+' car'+(cars.length!==1?'s':'');
+  const tbody=$('listingsTbody');
+
+  if(!cars.length){
+    tbody.innerHTML='';
+    $('listingsEmpty').style.display='block';
+    return;
+  }
+  $('listingsEmpty').style.display='none';
+
+  tbody.innerHTML=cars.map(c=>{
+    const e=eng[c.id]||{};
+    const isNew=c.createdAt&&Date.now()-c.createdAt<7*864e5;
+    const thumb=c.images&&c.images[0]
+      ? `<img src="${c.images[0]}" class="car-thumb" onerror="this.style.display='none'">`
+      : `<div class="car-thumb-placeholder"><i class="fas fa-car"></i></div>`;
+    return `<tr>
+      <td>${thumb}</td>
+      <td>
+        <div class="car-name">${c.year||''} ${c.make} ${c.model}</div>
+        <div class="car-meta">${c.transmission||''} · ${c.fuel||''} · ${c.condition||''}</div>
+      </td>
+      <td><span class="price">${fmtPrice(c.price)}</span></td>
+      <td><span style="font-size:.78rem;color:var(--mist)">${c.location||'—'}</span></td>
+      <td>
+        <div style="font-size:.75rem;color:var(--mist);display:flex;gap:.75rem">
+          <span title="Views"><i class="fas fa-eye" style="color:var(--fog)"></i> ${e.views||0}</span>
+          <span title="Likes"><i class="fas fa-heart" style="color:var(--red);opacity:.6"></i> ${e.likes||0}</span>
+          <span title="Comments"><i class="fas fa-comment" style="color:var(--blue);opacity:.6"></i> ${(e.comments||[]).length}</span>
+        </div>
+      </td>
+      <td>
+        <div style="display:flex;flex-direction:column;gap:.3rem">
+          ${c.featured?'<span class="tag featured">⭐ Featured</span>':''}
+          ${isNew?'<span class="tag new">New</span>':''}
+        </div>
+      </td>
+      <td>
+        <div class="acts">
+          <button class="act-btn star ${c.featured?'on':''}" title="${c.featured?'Unfeature':'Feature on homepage'}"
+            onclick="toggleFeatured('${c.id}')">
+            <i class="fas fa-star"></i>
+          </button>
+          <button class="act-btn edit" title="Edit" onclick="openEditCar('${c.id}')">
+            <i class="fas fa-pen"></i>
+          </button>
+          ${c.phone?`<button class="act-btn wa" title="WhatsApp seller"
+            onclick="window.open('https://wa.me/${c.phone.replace(/\D/g,'')}?text=Hi%20${encodeURIComponent(c.ownerName||'there')}%2C%20regarding%20your%20${encodeURIComponent((c.year||'')+' '+c.make+' '+c.model)}','_blank')">
+            <i class="fab fa-whatsapp"></i>
+          </button>`:''}
+          <button class="act-btn del" title="Delete" onclick="confirmDeleteCar('${c.id}')">
+            <i class="fas fa-trash"></i>
+          </button>
+        </div>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+async function toggleFeatured(id){
+  const cars = await getCars();
+  const car = cars.find(c=>c.id===id);
+  if(!car)return;
+  const newVal = !car.featured;
+  const {error} = await sb.from('car_listings').update({featured:newVal}).eq('id',id);
+  if(error){toast('Error updating. Try again.','err');return;}
+  toast(newVal?'⭐ Featured! Showing on homepage.':'Removed from featured.',newVal?'info':'ok');
+  renderListings().catch(console.error); renderOverview().catch(console.error); updateBadges().catch(console.error);
+}
+
+function confirmDeleteCar(id){
+  $('confirmText').textContent='Delete this car listing? This cannot be undone.';
+  openModal('confirmModal');
+  $('confirmOkBtn').onclick=()=>{ deleteCar(id); closeModal('confirmModal'); };
+}
+async function deleteCar(id){
+  // Delete comments first (cascade should handle it, but to be safe)
+  await sb.from('car_comments').delete().eq('car_id',id);
+  const {error} = await sb.from('car_listings').delete().eq('id',id);
+  if(error){toast('Delete failed. Try again.','err');return;}
+  toast('Car deleted.','ok');
+  renderListings().catch(console.error); renderOverview().catch(console.error); updateBadges().catch(console.error);
+}
+
+// ─── ADD / EDIT CAR ───
+function openAddCar(){
+  $('carModalTitle').textContent='Add Car';
+  $('editCarId').value='';
+  ['make','model','year','price','mileage','color','loc','phone','desc'].forEach(f=>$('cm-'+f).value='');
+  $('cm-trans').value='Automatic';
+  $('cm-fuel').value='Petrol';
+  $('cm-body').value='';
+  $('cm-cond').value='Excellent';
+  $('cm-featured').checked=false;
+  openModal('carModal');
+}
+async function openEditCar(id){
+  const cars=await getCars(); const c=cars.find(x=>x.id===id); if(!c)return;
+  $('carModalTitle').textContent='Edit Car';
+  $('editCarId').value=id;
+  $('cm-make').value=c.make||'';
+  $('cm-model').value=c.model||'';
+  $('cm-year').value=c.year||'';
+  $('cm-price').value=c.price||'';
+  $('cm-trans').value=c.transmission||'Automatic';
+  $('cm-fuel').value=c.fuel||'Petrol';
+  $('cm-body').value=c.body_type||'';
+  $('cm-mileage').value=c.mileage||'';
+  $('cm-color').value=c.color||'';
+  $('cm-cond').value=c.condition||'Excellent';
+  $('cm-loc').value=c.location||'';
+  $('cm-phone').value=c.phone||'';
+  $('cm-desc').value=c.description||'';
+  $('cm-featured').checked=!!c.featured;
+  openModal('carModal');
+}
+async function saveCar(){
+  const make=($('cm-make').value||'').trim();
+  const model=($('cm-model').value||'').trim();
+  const price=parseFloat($('cm-price').value)||0;
+  if(!make||!model||!price){ toast('Make, model and price are required.','err'); return; }
+
+  const editId=$('editCarId').value;
+  const carData={
+    make, model,
+    year: parseInt($('cm-year').value)||new Date().getFullYear(),
+    price,
+    mileage: parseInt($('cm-mileage').value)||0,
+    transmission: $('cm-trans').value,
+    fuel: $('cm-fuel').value,
+    body_type: $('cm-body').value,
+    color: $('cm-color').value.trim(),
+    condition: $('cm-cond').value,
+    location: $('cm-loc').value.trim(),
+    phone: $('cm-phone').value.trim(),
+    description: $('cm-desc').value.trim(),
+    featured: $('cm-featured').checked,
+  };
+
+  let error;
+  if(editId){
+    ({error} = await sb.from('car_listings').update(carData).eq('id',editId));
+    if(!error) toast('Car updated.','ok');
+  } else {
+    ({error} = await sb.from('car_listings').insert([{...carData,images:[],views:0,likes:0}]));
+    if(!error) toast('Car added.','ok');
+  }
+  if(error){toast('Save failed: '+error.message,'err');return;}
+  closeModal('carModal');
+  renderListings().catch(console.error); renderOverview().catch(console.error); updateBadges().catch(console.error);
+}
+
+// ═══════════════════════════════════════
+// APPLICATIONS
+// ═══════════════════════════════════════
+async function renderApps(){
+  let apps=await getApps();
+  const q=($('appSearch').value||'').toLowerCase();
+  const f=$('appFilter').value;
+
+  if(q) apps=apps.filter(a=>[a.firstName,a.lastName,a.phone,a.email,a.location||'']
+    .join(' ').toLowerCase().includes(q));
+  if(f) apps=apps.filter(a=>(a.status||'pending')===f);
+
+  $('appCount').textContent=apps.length+' application'+(apps.length!==1?'s':'');
+  const tbody=$('appsTbody');
+
+  if(!apps.length){
+    tbody.innerHTML='';
+    $('appsEmpty').style.display='block';
+    return;
+  }
+  $('appsEmpty').style.display='none';
+
+  tbody.innerHTML=[...apps].reverse().map(a=>{
+    const st=a.status||'pending';
+    const stTag=`<span class="tag ${st}">${st}</span>`;
+    const expMap={'0-1':'0–1 yrs','1-3':'1–3 yrs','3-5':'3–5 yrs','5+':'5+ yrs'};
+    const licMap={'active':'Active','expired':'Expired','none':'None'};
+    return `<tr>
+      <td>
+        <div class="car-name">${a.firstName} ${a.lastName}</div>
+        <div class="car-meta">${a.location||'—'}</div>
+      </td>
+      <td>
+        <div style="font-size:.78rem">${a.phone||'—'}</div>
+        <div class="car-meta">${a.email||'—'}</div>
+      </td>
+      <td><span class="pill">${expMap[a.experience]||a.experience||'—'}</span></td>
+      <td><span class="pill">${licMap[a.license]||a.license||'—'}</span></td>
+      <td><span style="font-size:.75rem;color:var(--mist)">${fmtDate(a.submittedAt)}</span></td>
+      <td>${stTag}</td>
+      <td>
+        <div class="acts">
+          <button class="act-btn" title="View details" onclick="viewApp('${a.id}')">
+            <i class="fas fa-eye"></i>
+          </button>
+          ${a.phone?`<button class="act-btn wa" title="WhatsApp applicant"
+            onclick="window.open('https://wa.me/${a.phone.replace(/\D/g,'')}?text=Hi%20${encodeURIComponent(a.firstName)}%2C%20thank%20you%20for%20applying%20to%20DM%20Car%20Agency%21','_blank')">
+            <i class="fab fa-whatsapp"></i>
+          </button>`:''}
+          <button class="act-btn approve ${st==='approved'?'on':''}" title="Approve"
+            onclick="setAppStatus('${a.id}','approved')">
+            <i class="fas fa-check"></i>
+          </button>
+          <button class="act-btn reject ${st==='rejected'?'on':''}" title="Reject"
+            onclick="setAppStatus('${a.id}','rejected')">
+            <i class="fas fa-times"></i>
+          </button>
+          <button class="act-btn del" title="Delete" onclick="confirmDeleteApp('${a.id}')">
+            <i class="fas fa-trash"></i>
+          </button>
+        </div>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+async function setAppStatus(id,status){
+  const {error} = await sb.from('applications').update({status}).eq('id',id);
+  if(error){toast('Update failed.','err');return;}
+  const apps = await getApps();
+  const a=apps.find(x=>x.id===id);
+  const msg=status==='approved'?`✅ ${a?a.firstName:'Applicant'} approved!`:`❌ ${a?a.firstName:'Applicant'} rejected.`;
+  toast(msg, status==='approved'?'ok':'err');
+  renderApps().catch(console.error); renderOverview().catch(console.error); updateBadges().catch(console.error);
+}
+
+async function viewApp(id){
+  const apps=await getApps(); const a=apps.find(x=>x.id===id); if(!a)return;
+  const st=a.status||'pending';
+  $('appModalBody').innerHTML=`
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1.25rem">
+      <div><div class="modal-label">First Name</div><div style="margin-top:.3rem;color:var(--white)">${a.firstName}</div></div>
+      <div><div class="modal-label">Last Name</div><div style="margin-top:.3rem;color:var(--white)">${a.lastName}</div></div>
+      <div><div class="modal-label">Phone</div><div style="margin-top:.3rem;color:var(--linen)">${a.phone||'—'}</div></div>
+      <div><div class="modal-label">Email</div><div style="margin-top:.3rem;color:var(--linen)">${a.email||'—'}</div></div>
+      <div><div class="modal-label">Location</div><div style="margin-top:.3rem;color:var(--linen)">${a.location||'—'}</div></div>
+      <div><div class="modal-label">Experience</div><div style="margin-top:.3rem;color:var(--linen)">${a.experience||'—'}</div></div>
+      <div><div class="modal-label">License</div><div style="margin-top:.3rem;color:var(--linen)">${a.license||'—'}</div></div>
+      <div><div class="modal-label">Applied</div><div style="margin-top:.3rem;color:var(--linen)">${fmtDate(a.submittedAt)}</div></div>
+    </div>
+    <div class="modal-label">Message</div>
+    <div style="margin-top:.5rem;padding:.875rem;background:var(--ink2);border-radius:var(--r);
+      font-size:.82rem;color:var(--mist);line-height:1.7;border:1px solid var(--border)">
+      ${a.message||'—'}
+    </div>
+    <div style="margin-top:1rem;display:flex;align-items:center;gap:.5rem">
+      <span class="modal-label">Status:</span>
+      <span class="tag ${st}">${st}</span>
+    </div>`;
+  $('appModalFoot').innerHTML=`
+    <button class="modal-btn cancel" onclick="closeModal('appModal')">Close</button>
+    ${a.phone?`<a href="https://wa.me/${a.phone.replace(/\D/g,'')}?text=Hi%20${encodeURIComponent(a.firstName)}%2C%20your%20DM%20Car%20Agency%20application%20has%20been%20reviewed!"
+      target="_blank" class="modal-btn" style="background:var(--wa);color:#fff;display:inline-flex;align-items:center;gap:7px;text-decoration:none">
+      <i class="fab fa-whatsapp"></i> Message
+    </a>`:''}
+    <button class="modal-btn save" onclick="setAppStatus('${a.id}','approved');closeModal('appModal')">Approve</button>`;
+  openModal('appModal');
+}
+
+function confirmDeleteApp(id){
+  $('confirmText').textContent='Delete this application permanently?';
+  openModal('confirmModal');
+  $('confirmOkBtn').onclick=async()=>{
+    const {error} = await sb.from('applications').delete().eq('id',id);
+    if(error){toast('Delete failed.','err');return;}
+    toast('Application deleted.','ok');
+    closeModal('confirmModal');
+    renderApps().catch(console.error); renderOverview().catch(console.error); updateBadges().catch(console.error);
+  };
+}
+
+// ═══════════════════════════════════════
+// ENGAGEMENT
+// ═══════════════════════════════════════
+async function renderEngagement(){
+  const [cars,eng] = await Promise.all([getCars(),getEng()]);
+  let tv=0,tl=0,tc=0;
+  Object.values(eng).forEach(e=>{tv+=e.views||0;tl+=e.likes||0;tc+=(e.comments||[]).length});
+
+  $('engStats').innerHTML=[
+    {label:'Total Views',val:tv,icon:'fa-eye',color:'var(--blue)',bg:'var(--blue-a)'},
+    {label:'Total Likes',val:tl,icon:'fa-heart',color:'var(--red)',bg:'var(--red-a)'},
+    {label:'Total Comments',val:tc,icon:'fa-comment',color:'var(--wa)',bg:'var(--wa-a)'},
+    {label:'Tracked Cars',val:Object.keys(eng).length,icon:'fa-car',color:'var(--gold)',bg:'var(--gold-a)'},
+  ].map(s=>`<div class="stat-card">
+    <div class="stat-ico" style="background:${s.bg};color:${s.color}"><i class="fas ${s.icon}"></i></div>
+    <div class="stat-value">${s.val}</div>
+    <div class="stat-label">${s.label}</div>
+  </div>`).join('');
+
+  const carsWithEng=cars.filter(c=>eng[c.id]).sort((a,b)=>
+    ((eng[b.id]?.views||0)+(eng[b.id]?.likes||0))-((eng[a.id]?.views||0)+(eng[a.id]?.likes||0)));
+
+  if(!carsWithEng.length){
+    $('engGrid').innerHTML='';
+    $('engEmpty').style.display='block';
+    return;
+  }
+  $('engEmpty').style.display='none';
+
+  $('engGrid').innerHTML=carsWithEng.map(c=>{
+    const e=eng[c.id]||{};
+    const comments=(e.comments||[]);
+    const thumb=c.images&&c.images[0]
+      ? `<img src="${c.images[0]}" class="eng-thumb" onerror="this.style.display='none'">`
+      : `<div class="eng-thumb-ph"><i class="fas fa-car"></i></div>`;
+    return `<div class="eng-card">
+      <div class="eng-card-head">
+        ${thumb}
+        <div class="eng-info">
+          <h4>${c.year||''} ${c.make} ${c.model}</h4>
+          <p>${fmtPrice(c.price)} · ${c.location||'—'}</p>
+        </div>
+      </div>
+      <div class="eng-stats">
+        <div class="eng-stat">
+          <div class="eng-stat-val">${e.views||0}</div>
+          <div class="eng-stat-lbl">Views</div>
+        </div>
+        <div class="eng-stat">
+          <div class="eng-stat-val">${e.likes||0}</div>
+          <div class="eng-stat-lbl">Likes</div>
+        </div>
+        <div class="eng-stat">
+          <div class="eng-stat-val">${comments.length}</div>
+          <div class="eng-stat-lbl">Comments</div>
+        </div>
+      </div>
+      ${comments.length?`
+      <div class="eng-comments">
+        ${comments.map((cm,ci)=>`
+          <div class="eng-comment">
+            <span class="eng-comment-del" title="Delete comment"
+              onclick="deleteComment('${cm.id}')">
+              <i class="fas fa-times"></i>
+            </span>
+            <div class="eng-comment-name">${cm.name||'Anonymous'}</div>
+            <div class="eng-comment-text">${cm.text||''}</div>
+          </div>`).join('')}
+      </div>`:''}
+    </div>`;
+  }).join('');
+}
+
+async function deleteComment(commentId){
+  const {error} = await sb.from('car_comments').delete().eq('id',commentId);
+  if(error){toast('Delete failed.','err');return;}
+  toast('Comment deleted.','ok');
+  renderEngagement().catch(console.error);
+}
+
+// ═══════════════════════════════════════
+// SETTINGS
+// ═══════════════════════════════════════
+function loadSettings(){
+  const s=getSettings();
+  $('adminPhone').value=s.phone||'265980717420';
+  $('agencyName').value=s.name||'DM Car Agency';
+}
+function saveSettings(){
+  const s={phone:$('adminPhone').value.trim(),name:$('agencyName').value.trim()};
+  setSettings(s);
+  toast('Settings saved.','ok');
+}
+function changePassword(){
+  const curr=$('currPass').value;
+  const nw=$('newPass').value;
+  const cf=$('confPass').value;
+  if(curr!==getStoredPass()){ toast('Current password is wrong.','err'); return; }
+  if(nw.length<6){ toast('New password must be at least 6 characters.','err'); return; }
+  if(nw!==cf){ toast('Passwords do not match.','err'); return; }
+  localStorage.setItem(PASS_KEY,nw);
+  $('currPass').value=$('newPass').value=$('confPass').value='';
+  toast('Password updated!','ok');
+}
+async function exportData(tableOrKey,filename){
+  let data=[];
+  if(tableOrKey==='dmcars_listings') data=await getCars();
+  else if(tableOrKey==='dmcars_applications') data=await getApps();
+  else if(tableOrKey==='dmcars_engagement') data=await getEng();
+  const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download=filename+'-'+new Date().toISOString().slice(0,10)+'.json';
+  a.click();
+  toast('Exported '+filename+'.','ok');
+}
+function confirmClear(tableOrKey,label){
+  $('confirmText').textContent=`Delete ALL ${label}? This CANNOT be undone.`;
+  openModal('confirmModal');
+  $('confirmOkBtn').onclick=async()=>{
+    if(tableOrKey==='dmcars_listings')        await sb.from('car_listings').delete().neq('id','00000000-0000-0000-0000-000000000000');
+    else if(tableOrKey==='dmcars_applications')await sb.from('applications').delete().neq('id','00000000-0000-0000-0000-000000000000');
+    else if(tableOrKey==='dmcars_engagement') { await sb.from('car_comments').delete().neq('id','00000000-0000-0000-0000-000000000000');
+                                                await sb.from('car_listings').update({views:0,likes:0}).neq('id','00000000-0000-0000-0000-000000000000'); }
+    toast(label+' cleared.','info');
+    closeModal('confirmModal');
+    renderOverview().catch(console.error); updateBadges().catch(console.error);
+    if(currentPanel==='listings') renderListings().catch(console.error);
+    if(currentPanel==='applications') renderApps().catch(console.error);
+    if(currentPanel==='engagement') renderEngagement().catch(console.error);
+  };
+}
+
+// ═══════════════════════════════════════
+// MODALS
+// ═══════════════════════════════════════
+function openModal(id){ $(id).classList.add('open') }
+function closeModal(id){ $(id).classList.remove('open') }
+// Close on backdrop click
+document.querySelectorAll('.modal-bg').forEach(bg=>{
+  bg.addEventListener('click',e=>{ if(e.target===bg) bg.classList.remove('open') });
+});
+// Esc key
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape') document.querySelectorAll('.modal-bg.open')
+    .forEach(m=>m.classList.remove('open'));
+});
+
+// ═══════════════════════════════════════
+// REAL-TIME: LISTEN FOR SUPABASE CHANGES
+// Auto-refreshes when anyone submits a car or applies from any device
+// ═══════════════════════════════════════
+function startRealtime(){
+  sb.channel('admin-updates')
+    .on('postgres_changes',{event:'INSERT',schema:'public',table:'car_listings'},()=>{
+      toast('🚗 New car listing submitted!','info');
+      updateBadges().catch(console.error);
+      if(currentPanel==='overview') renderOverview().catch(console.error);
+      if(currentPanel==='listings') renderListings().catch(console.error);
+    })
+    .on('postgres_changes',{event:'INSERT',schema:'public',table:'applications'},()=>{
+      toast('👤 New team application received!','ok');
+      updateBadges().catch(console.error);
+      if(currentPanel==='overview')     renderOverview().catch(console.error);
+      if(currentPanel==='applications') renderApps().catch(console.error);
+    })
+    .on('postgres_changes',{event:'INSERT',schema:'public',table:'car_comments'},()=>{
+      if(currentPanel==='engagement') renderEngagement().catch(console.error);
+    })
+    .subscribe();
+}
+</script>
+</body>
+</html>
