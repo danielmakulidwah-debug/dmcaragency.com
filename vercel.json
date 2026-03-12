@@ -1,0 +1,11 @@
+{
+  "cleanUrls": true,
+  "trailingSlash": false,
+  "routes": [
+    { "src": "/", "dest": "/index.html" },
+    { "src": "/listings", "dest": "/listings.html" },
+    { "src": "/sell", "dest": "/sell-car.html" },
+    { "src": "/join", "dest": "/join-team.html" },
+    { "src": "/admin", "dest": "/admin.html" }
+  ]
+}
