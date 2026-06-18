@@ -1,0 +1,818 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Admin Dashboard — DM Car Agency</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=Oswald:wght@500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#080808;--surface:#111;--surface2:#181818;--surface3:#1f1f1f;
+  --border:rgba(255,255,255,.07);--border2:rgba(255,255,255,.04);
+  --text:#f0ede8;--muted:#777;--dim:#333;
+  --flame:#e8491d;--gold:#c8973a;--green:#27ae60;--red:#e74c3c;--blue:#3498db;
+  --fh:'Oswald',sans-serif;--fb:'DM Sans',sans-serif;
+}
+html,body{height:100%;font-family:var(--fb);background:var(--bg);color:var(--text)}
+body{display:flex;flex-direction:column;min-height:100vh}
+
+/* LOGIN */
+#loginWrap{flex:1;display:flex;align-items:center;justify-content:center;padding:2rem}
+.login-card{background:var(--surface);border:1px solid var(--border);border-radius:6px;
+  padding:2.25rem 2rem;width:100%;max-width:380px}
+.login-logo{font-family:var(--fh);font-size:1.3rem;letter-spacing:2px;margin-bottom:.35rem}
+.login-logo span{color:var(--flame)}
+.login-sub{font-size:.78rem;color:var(--muted);margin-bottom:1.75rem}
+.fl{display:block;font-size:.68rem;letter-spacing:1.5px;text-transform:uppercase;
+  color:var(--muted);margin-bottom:.4rem;margin-top:1rem}
+.fi{width:100%;background:var(--surface2);border:1px solid var(--border);
+  color:var(--text);padding:.7rem .85rem;border-radius:4px;font-size:.9rem;font-family:var(--fb)}
+.fi:focus{outline:none;border-color:var(--flame)}
+.fb{width:100%;margin-top:1.5rem;background:var(--flame);color:#fff;border:none;
+  padding:.8rem;border-radius:4px;font-family:var(--fh);letter-spacing:2px;
+  font-size:.8rem;text-transform:uppercase;cursor:pointer;transition:opacity .2s}
+.fb:hover{opacity:.88}
+.fb:disabled{opacity:.5;cursor:not-allowed}
+.ferr{margin-top:.9rem;font-size:.82rem;padding:.65rem .85rem;border-radius:4px;
+  background:rgba(231,76,60,.1);border:1px solid rgba(231,76,60,.25);
+  color:#ff8a65;display:none}
+.ferr.show{display:block}
+
+/* APP SHELL */
+#app{display:none;flex-direction:column;height:100vh;overflow:hidden}
+
+/* HEADER */
+.hdr{background:var(--surface);border-bottom:1px solid var(--border);
+  padding:.75rem 1.1rem;display:flex;align-items:center;gap:.75rem;flex-shrink:0;flex-wrap:wrap}
+.hdr-logo{font-family:var(--fh);font-size:1rem;letter-spacing:2px;margin-right:auto}
+.hdr-logo span{color:var(--flame)}
+.hdr-logo small{font-size:.55rem;color:var(--muted);letter-spacing:3px;display:block;margin-top:1px}
+.hdr-link{background:var(--surface2);border:1px solid var(--border);color:var(--muted);
+  padding:.38rem .75rem;border-radius:4px;font-size:.72rem;cursor:pointer;
+  text-decoration:none;display:flex;align-items:center;gap:.35rem;transition:.15s;white-space:nowrap}
+.hdr-link:hover{border-color:var(--flame);color:var(--flame)}
+.hdr-link.primary{background:var(--flame);border-color:var(--flame);color:#fff}
+.hdr-link.primary:hover{opacity:.88}
+.out-btn{background:transparent;border:1px solid var(--border);color:var(--muted);
+  padding:.38rem .65rem;border-radius:4px;font-size:.72rem;cursor:pointer;transition:.15s}
+.out-btn:hover{border-color:var(--red);color:var(--red)}
+.admin-label{font-size:.75rem;color:var(--muted)}
+.admin-label b{color:var(--text)}
+
+/* NAV TABS */
+.nav-tabs{display:flex;background:var(--surface);border-bottom:1px solid var(--border);
+  overflow-x:auto;flex-shrink:0;scrollbar-width:none}
+.nav-tabs::-webkit-scrollbar{display:none}
+.nav-tab{padding:.75rem 1.1rem;font-size:.75rem;font-family:var(--fh);letter-spacing:1px;
+  text-transform:uppercase;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;
+  white-space:nowrap;transition:.15s;display:flex;align-items:center;gap:.45rem;flex-shrink:0}
+.nav-tab:hover{color:var(--text)}
+.nav-tab.active{color:var(--flame);border-bottom-color:var(--flame)}
+.tab-badge{background:var(--flame);color:#fff;font-size:.55rem;
+  padding:.1rem .4rem;border-radius:10px;font-family:var(--fb);font-weight:700}
+.tab-badge.gold{background:var(--gold)}
+.tab-badge.green{background:var(--green)}
+
+/* PANEL */
+.panel{display:none;flex:1;overflow-y:auto;padding:1.1rem;flex-direction:column;gap:1.1rem}
+.panel.active{display:flex}
+
+/* STATS */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;
+  background:var(--border);border:1px solid var(--border);border-radius:6px;
+  overflow:hidden;flex-shrink:0}
+.stat{background:var(--surface);padding:.9rem 1rem}
+.stat-lbl{font-size:.62rem;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-bottom:.3rem}
+.stat-val{font-family:var(--fh);font-size:1.5rem}
+.stat-val.g{color:var(--green)}
+.stat-val.f{color:var(--flame)}
+.stat-val.go{color:var(--gold)}
+@media(max-width:500px){.stats{grid-template-columns:1fr 1fr}}
+
+/* CARD */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:6px;overflow:hidden}
+.card-head{padding:.8rem 1.1rem;border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;gap:.75rem;flex-wrap:wrap}
+.card-title{font-family:var(--fh);font-size:.85rem;letter-spacing:1px;text-transform:uppercase}
+.card-count{font-size:.72rem;color:var(--muted)}
+.card-actions{display:flex;gap:.5rem;align-items:center}
+
+/* BACK BTN */
+.back-btn{background:var(--surface2);border:1px solid var(--border);color:var(--muted);
+  padding:.35rem .7rem;border-radius:4px;font-size:.72rem;cursor:pointer;
+  display:flex;align-items:center;gap:.35rem;transition:.15s}
+.back-btn:hover{border-color:var(--gold);color:var(--gold)}
+
+/* SEARCH / FILTER */
+.toolbar{padding:.65rem 1.1rem;border-bottom:1px solid var(--border);
+  display:flex;gap:.6rem;align-items:center;flex-wrap:wrap}
+.search-wrap{flex:1;min-width:120px;position:relative}
+.search-wrap i{position:absolute;left:.65rem;top:50%;transform:translateY(-50%);
+  color:var(--muted);font-size:.75rem}
+.search-inp{width:100%;background:var(--surface2);border:1px solid var(--border);
+  color:var(--text);padding:.5rem .75rem .5rem 2rem;border-radius:4px;font-size:.82rem;font-family:var(--fb)}
+.search-inp:focus{outline:none;border-color:var(--flame)}
+.filter-sel{background:var(--surface2);border:1px solid var(--border);color:var(--text);
+  padding:.5rem .7rem;border-radius:4px;font-size:.78rem;font-family:var(--fb)}
+
+/* AGENT LIST */
+.agent-item{padding:.85rem 1.1rem;border-bottom:1px solid var(--border2);
+  display:flex;align-items:flex-start;gap:.85rem;cursor:pointer;transition:background .15s}
+.agent-item:last-child{border-bottom:none}
+.agent-item:hover,.agent-item.active{background:var(--surface2)}
+.avatar{width:36px;height:36px;border-radius:50%;background:var(--surface3);
+  display:flex;align-items:center;justify-content:center;font-family:var(--fh);
+  font-size:.9rem;color:var(--muted);flex-shrink:0}
+.a-info{flex:1;min-width:0}
+.a-name{font-weight:600;font-size:.88rem}
+.a-meta{font-size:.7rem;color:var(--muted);margin-top:.1rem}
+.a-actions{display:flex;gap:.35rem;margin-top:.4rem;flex-wrap:wrap}
+.aa{font-size:.63rem;padding:.22rem .5rem;border-radius:3px;border:none;
+  cursor:pointer;font-weight:600;text-transform:uppercase;letter-spacing:.4px;transition:opacity .2s}
+.aa:hover{opacity:.78}
+.aa.approve{background:rgba(39,174,96,.2);color:var(--green)}
+.aa.reject{background:rgba(231,76,60,.2);color:var(--red)}
+.aa.revoke{background:rgba(231,76,60,.15);color:var(--red)}
+.aa.reapprove{background:rgba(39,174,96,.15);color:var(--green)}
+.aa.view-cars{background:rgba(52,152,219,.15);color:var(--blue)}
+.a-right{display:flex;flex-direction:column;align-items:flex-end;gap:.3rem;flex-shrink:0}
+.badge{font-size:.6rem;padding:.18rem .45rem;border-radius:3px;text-transform:uppercase;font-weight:600}
+.badge.pending{background:rgba(200,151,58,.15);color:var(--gold)}
+.badge.approved{background:rgba(39,174,96,.15);color:var(--green)}
+.badge.rejected{background:rgba(231,76,60,.15);color:var(--red)}
+.a-stat{font-size:.68rem;color:var(--muted)}
+
+/* ACTIVITY FEED */
+.feed-filter-bar{padding:.6rem 1.1rem;border-bottom:1px solid var(--border);
+  display:flex;align-items:center;gap:.5rem;flex-wrap:wrap}
+.ffl{font-size:.72rem;color:var(--muted)}
+.chip{font-size:.7rem;padding:.28rem .6rem;border-radius:20px;
+  border:1px solid var(--border);color:var(--muted);background:transparent;
+  cursor:pointer;transition:.15s;display:flex;align-items:center;gap:.3rem}
+.chip:hover,.chip.on{border-color:var(--flame);color:var(--flame)}
+.chip.clr:hover{border-color:var(--red);color:var(--red)}
+
+.ev-row{padding:.75rem 1.1rem;border-bottom:1px solid var(--border2);
+  display:flex;align-items:flex-start;gap:.8rem}
+.ev-row:last-child{border-bottom:none}
+.ev-ico{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;
+  justify-content:center;font-size:.72rem;flex-shrink:0;margin-top:.1rem}
+.ev-login .ev-ico{background:rgba(39,174,96,.12);color:var(--green)}
+.ev-logout .ev-ico{background:rgba(119,119,119,.1);color:var(--muted)}
+.ev-signup .ev-ico{background:rgba(200,151,58,.12);color:var(--gold)}
+.ev-car_submitted .ev-ico{background:rgba(232,73,29,.12);color:var(--flame)}
+.ev-car_edited .ev-ico{background:rgba(52,152,219,.12);color:var(--blue)}
+.ev-body{flex:1;min-width:0}
+.ev-who{font-size:.8rem;font-weight:600}
+.ev-what{font-size:.75rem;color:var(--muted);margin-top:.1rem}
+.ev-detail{font-size:.7rem;color:var(--dim);margin-top:.08rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ev-time{font-size:.68rem;color:var(--dim);flex-shrink:0;margin-top:.1rem}
+
+/* LISTINGS TABLE */
+.tbl{width:100%;border-collapse:collapse}
+.tbl th{text-align:left;font-family:var(--fh);font-size:.62rem;letter-spacing:1.5px;
+  text-transform:uppercase;color:var(--muted);padding:.75rem 1rem;
+  border-bottom:1px solid var(--border);background:var(--surface2);white-space:nowrap}
+.tbl td{padding:.75rem 1rem;border-bottom:1px solid var(--border2);font-size:.82rem;vertical-align:middle}
+.tbl tr:last-child td{border-bottom:none}
+.tbl-wrap{overflow-x:auto}
+.car-thumb{width:48px;height:34px;object-fit:cover;border-radius:3px;background:var(--surface3)}
+.car-thumb-ph{width:48px;height:34px;border-radius:3px;background:var(--surface3);
+  display:flex;align-items:center;justify-content:center;color:var(--dim);font-size:.7rem}
+.price-cell{color:var(--gold);font-weight:600}
+.stag{font-size:.62rem;padding:.18rem .45rem;border-radius:3px;text-transform:uppercase;font-weight:600}
+.stag.active{background:rgba(39,174,96,.15);color:var(--green)}
+.stag.sold{background:rgba(52,152,219,.15);color:var(--blue)}
+.eng{display:flex;gap:.6rem;font-size:.7rem;color:var(--muted)}
+.eng i{margin-right:.2rem}
+
+/* APPLICATIONS */
+.app-item{padding:.85rem 1.1rem;border-bottom:1px solid var(--border2)}
+.app-item:last-child{border-bottom:none}
+.app-top{display:flex;align-items:center;justify-content:space-between;gap:.5rem;margin-bottom:.35rem}
+.app-name{font-weight:600;font-size:.88rem}
+.app-status{font-size:.6rem;padding:.18rem .45rem;border-radius:3px;text-transform:uppercase;font-weight:600}
+.app-status.pending{background:rgba(200,151,58,.15);color:var(--gold)}
+.app-status.approved{background:rgba(39,174,96,.15);color:var(--green)}
+.app-status.rejected{background:rgba(231,76,60,.15);color:var(--red)}
+.app-meta{font-size:.75rem;color:var(--muted);line-height:1.6}
+.app-actions{display:flex;gap:.4rem;margin-top:.5rem}
+
+/* EMPTY */
+.empty{padding:2.5rem 1.25rem;text-align:center;color:var(--muted)}
+.empty i{font-size:1.6rem;display:block;margin-bottom:.65rem;color:var(--dim)}
+.empty p{font-size:.82rem;line-height:1.6}
+
+/* TOAST */
+.toast{position:fixed;bottom:1.25rem;left:50%;transform:translateX(-50%);
+  background:var(--surface2);border:1px solid var(--border);border-radius:5px;
+  padding:.7rem 1.1rem;font-size:.8rem;display:none;align-items:center;
+  gap:.55rem;z-index:999;box-shadow:0 8px 24px rgba(0,0,0,.5);white-space:nowrap}
+.toast.show{display:flex}
+.toast.ok i{color:var(--green)}
+.toast.err i{color:var(--red)}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="loginWrap">
+  <div class="login-card">
+    <div class="login-logo">DM CAR <span>AGENCY</span></div>
+    <div class="login-sub">Admin Dashboard — authorised access only</div>
+    <label class="fl">Email</label>
+    <input class="fi" type="email" id="lEmail" autocomplete="email">
+    <label class="fl">Password</label>
+    <input class="fi" type="password" id="lPass" autocomplete="current-password"
+      onkeydown="if(event.key==='Enter')login()">
+    <button class="fb" id="lBtn" onclick="login()">
+      <i class="fas fa-lock-open"></i> &nbsp;Access Dashboard
+    </button>
+    <div class="ferr" id="lErr"></div>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app">
+
+  <!-- HEADER -->
+  <div class="hdr">
+    <div class="hdr-logo">DM CAR <span>AGENCY</span><small>ADMIN DASHBOARD</small></div>
+    <a href="index.html" class="hdr-link"><i class="fas fa-home"></i> Home</a>
+    <a href="sell-car.html" class="hdr-link primary"><i class="fas fa-plus"></i> Sell Car</a>
+    <span class="admin-label">Admin: <b id="adminName">—</b></span>
+    <button class="out-btn" onclick="logout()" title="Log out"><i class="fas fa-sign-out-alt"></i></button>
+  </div>
+
+  <!-- TABS -->
+  <div class="nav-tabs">
+    <div class="nav-tab active" onclick="showTab('overview')"><i class="fas fa-th-large"></i> Overview</div>
+    <div class="nav-tab" onclick="showTab('agents')">
+      <i class="fas fa-id-badge"></i> Agents
+      <span class="tab-badge gold" id="tb-agents">0</span>
+    </div>
+    <div class="nav-tab" onclick="showTab('activity')"><i class="fas fa-history"></i> Activity</div>
+    <div class="nav-tab" onclick="showTab('listings')">
+      <i class="fas fa-car"></i> Listings
+      <span class="tab-badge" id="tb-listings">0</span>
+    </div>
+    <div class="nav-tab" onclick="showTab('applications')">
+      <i class="fas fa-users"></i> Applications
+      <span class="tab-badge green" id="tb-apps">0</span>
+    </div>
+  </div>
+
+  <!-- OVERVIEW TAB -->
+  <div class="panel active" id="tab-overview">
+    <div class="stats">
+      <div class="stat"><div class="stat-lbl">Agents</div><div class="stat-val" id="ov-agents">—</div></div>
+      <div class="stat"><div class="stat-lbl">Pending</div><div class="stat-val go" id="ov-pending">—</div></div>
+      <div class="stat"><div class="stat-lbl">Listings</div><div class="stat-val f" id="ov-listings">—</div></div>
+      <div class="stat"><div class="stat-lbl">Applications</div><div class="stat-val g" id="ov-apps">—</div></div>
+    </div>
+    <div class="stats" style="margin-top:0">
+      <div class="stat"><div class="stat-lbl">Total Views</div><div class="stat-val" id="ov-views">—</div></div>
+      <div class="stat"><div class="stat-lbl">Cars Sold</div><div class="stat-val go" id="ov-sold">—</div></div>
+      <div class="stat"><div class="stat-lbl">Activity 30d</div><div class="stat-val f" id="ov-act">—</div></div>
+      <div class="stat"><div class="stat-lbl">Agent Cars</div><div class="stat-val g" id="ov-agentcars">—</div></div>
+    </div>
+    <div class="card">
+      <div class="card-head"><span class="card-title">Pending Agent Approvals</span></div>
+      <div id="ov-pending-list"></div>
+    </div>
+    <div class="card">
+      <div class="card-head"><span class="card-title">Recent Activity</span><span class="card-count" id="ov-act-count"></span></div>
+      <div id="ov-activity-feed"></div>
+    </div>
+  </div>
+
+  <!-- AGENTS TAB -->
+  <div class="panel" id="tab-agents">
+    <div class="card">
+      <div class="card-head">
+        <span class="card-title">All Agents</span>
+        <span class="card-count" id="agents-count">—</span>
+      </div>
+      <div class="toolbar">
+        <div class="search-wrap">
+          <i class="fas fa-search"></i>
+          <input class="search-inp" id="agent-search" placeholder="Search name or email…" oninput="renderAgents()">
+        </div>
+        <select class="filter-sel" id="agent-filter" onchange="renderAgents()">
+          <option value="">All</option>
+          <option value="pending">Pending</option>
+          <option value="approved">Approved</option>
+          <option value="rejected">Rejected</option>
+        </select>
+      </div>
+      <div id="agent-list"></div>
+    </div>
+  </div>
+
+  <!-- ACTIVITY TAB -->
+  <div class="panel" id="tab-activity">
+    <div class="card" style="flex:1;display:flex;flex-direction:column;min-height:0">
+      <div class="card-head">
+        <div style="display:flex;align-items:center;gap:.6rem">
+          <button class="back-btn" id="act-back-btn" onclick="clearAgentFilter()" style="display:none">
+            <i class="fas fa-arrow-left"></i> All agents
+          </button>
+          <span class="card-title" id="act-title">All Activity</span>
+        </div>
+        <span class="card-count" id="act-count">—</span>
+      </div>
+      <div class="feed-filter-bar" id="act-filter-bar" style="display:none">
+        <span class="ffl">Filter by action:</span>
+        <button class="chip" onclick="toggleActionFilter('login')"><i class="fas fa-sign-in-alt"></i> Login</button>
+        <button class="chip" onclick="toggleActionFilter('car_submitted')"><i class="fas fa-car"></i> Submitted</button>
+        <button class="chip" onclick="toggleActionFilter('car_edited')"><i class="fas fa-pen"></i> Edited</button>
+      </div>
+      <div id="act-feed" style="flex:1;overflow-y:auto"></div>
+    </div>
+  </div>
+
+  <!-- LISTINGS TAB -->
+  <div class="panel" id="tab-listings">
+    <div class="card">
+      <div class="card-head">
+        <div style="display:flex;align-items:center;gap:.6rem">
+          <button class="back-btn" id="lst-back-btn" onclick="clearListingFilter()" style="display:none">
+            <i class="fas fa-arrow-left"></i> All listings
+          </button>
+          <span class="card-title" id="lst-title">All Listings</span>
+        </div>
+        <span class="card-count" id="lst-count">—</span>
+      </div>
+      <div class="toolbar">
+        <div class="search-wrap">
+          <i class="fas fa-search"></i>
+          <input class="search-inp" id="lst-search" placeholder="Search make, model…" oninput="renderListings()">
+        </div>
+        <select class="filter-sel" id="lst-filter" onchange="renderListings()">
+          <option value="">All status</option>
+          <option value="active">Active</option>
+          <option value="sold">Sold</option>
+        </select>
+      </div>
+      <div class="tbl-wrap">
+        <table class="tbl"><thead>
+          <tr><th></th><th>Car</th><th>Agent</th><th>Price</th><th>Status</th><th>Engagement</th></tr>
+        </thead><tbody id="lst-tbody"></tbody></table>
+        <div class="empty" id="lst-empty" style="display:none">
+          <i class="fas fa-car"></i><p>No listings found.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- APPLICATIONS TAB -->
+  <div class="panel" id="tab-applications">
+    <div class="card">
+      <div class="card-head">
+        <span class="card-title">Job Applications</span>
+        <span class="card-count" id="app-count">—</span>
+      </div>
+      <div class="toolbar">
+        <div class="search-wrap">
+          <i class="fas fa-search"></i>
+          <input class="search-inp" id="app-search" placeholder="Search name or email…" oninput="renderApplications()">
+        </div>
+        <select class="filter-sel" id="app-filter" onchange="renderApplications()">
+          <option value="">All</option>
+          <option value="pending">Pending</option>
+          <option value="approved">Approved</option>
+          <option value="rejected">Rejected</option>
+        </select>
+      </div>
+      <div id="app-list"></div>
+    </div>
+  </div>
+
+</div><!-- /app -->
+
+<div class="toast" id="toast"><i class="fas fa-check-circle"></i><span id="toastMsg"></span></div>
+
+<script>
+const SUPABASE_URL  = 'https://ospebrnwdvhuituoyxlw.supabase.co';
+const SUPABASE_ANON = 'sb_publishable_k7BrujJj8-zWKaLoHr1gfA_WRn_KWlQ';
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
+
+let currentAdmin = null;
+let allAgents = [], allActivity = [], allCars = [], allApplications = [];
+let filterAgentId = null, filterAgentName = '', filterListingAgentId = null;
+let actionFilter = null;
+let currentTab = 'overview';
+
+function $(id){ return document.getElementById(id); }
+function fmtPrice(n){
+  const v=parseFloat(n)||0;
+  if(v>=1000000) return 'MWK '+(v/1000000).toFixed(1)+'M';
+  if(v>=1000) return 'MWK '+(v/1000).toFixed(0)+'k';
+  return 'MWK '+v.toLocaleString();
+}
+function timeAgo(ts){
+  const s=Math.floor((Date.now()-new Date(ts).getTime())/1000);
+  if(s<60) return 'just now';
+  if(s<3600) return Math.floor(s/60)+'m ago';
+  if(s<86400) return Math.floor(s/3600)+'h ago';
+  return Math.floor(s/86400)+'d ago';
+}
+function fmtDate(ts){
+  if(!ts) return '—';
+  return new Date(ts).toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'});
+}
+function toast(msg,type){
+  type=type||'ok';
+  $('toastMsg').textContent=msg;
+  const t=$('toast');
+  t.className='toast show '+type;
+  t.querySelector('i').className=type==='ok'?'fas fa-check-circle':'fas fa-exclamation-circle';
+  clearTimeout(window._tt);
+  window._tt=setTimeout(function(){ t.className='toast'; },3000);
+}
+
+// ── LOGIN ──
+async function login(){
+  const email=$('lEmail').value.trim();
+  const pass=$('lPass').value;
+  const btn=$('lBtn'); const err=$('lErr');
+  err.className='ferr';
+  if(!email||!pass){ err.textContent='Enter email and password.'; err.className='ferr show'; return; }
+  btn.disabled=true;
+  btn.innerHTML='<i class="fas fa-circle-notch fa-spin"></i> &nbsp;Checking...';
+  try{
+    const {data,error}=await sb.auth.signInWithPassword({email,password:pass});
+    if(error) throw error;
+    const {data:p,error:pe}=await sb.from('agent_profiles').select('*').eq('id',data.user.id).single();
+    if(pe||!p) throw new Error('No profile found.');
+    if(p.role!=='admin'||p.status!=='approved') throw new Error('This account does not have admin access.');
+    currentAdmin=p;
+    $('adminName').textContent=p.full_name||email;
+    $('loginWrap').style.display='none';
+    $('app').style.display='flex';
+    loadAll();
+  }catch(e){
+    let msg=e.message||'Login failed.';
+    if(msg.toLowerCase().includes('invalid login credentials')) msg='Incorrect email or password.';
+    err.textContent=msg; err.className='ferr show';
+  }finally{
+    btn.disabled=false;
+    btn.innerHTML='<i class="fas fa-lock-open"></i> &nbsp;Access Dashboard';
+  }
+}
+async function logout(){
+  await sb.auth.signOut();
+  currentAdmin=null; filterAgentId=null;
+  $('loginWrap').style.display='flex';
+  $('app').style.display='none';
+}
+(async function(){
+  const {data}=await sb.auth.getSession();
+  if(!data.session) return;
+  const {data:p}=await sb.from('agent_profiles').select('*').eq('id',data.session.user.id).single();
+  if(p&&p.role==='admin'&&p.status==='approved'){
+    currentAdmin=p;
+    $('adminName').textContent=p.full_name||data.session.user.email;
+    $('loginWrap').style.display='none';
+    $('app').style.display='flex';
+    loadAll();
+  }
+})();
+
+// ── TABS ──
+function showTab(name){
+  currentTab=name;
+  document.querySelectorAll('.nav-tab').forEach(function(t){ t.classList.remove('active'); });
+  document.querySelectorAll('.panel').forEach(function(p){ p.classList.remove('active'); });
+  var tabs=document.querySelectorAll('.nav-tab');
+  var tabNames=['overview','agents','activity','listings','applications'];
+  var idx=tabNames.indexOf(name);
+  if(idx>=0) tabs[idx].classList.add('active');
+  var panel=$('tab-'+name);
+  if(panel) panel.classList.add('active');
+  if(name==='agents') renderAgents();
+  if(name==='activity') renderFeed();
+  if(name==='listings') renderListings();
+  if(name==='applications') renderApplications();
+}
+
+// ── DATA ──
+async function loadAll(){
+  const [agRes,actRes,carRes,appRes]=await Promise.all([
+    sb.from('agent_profiles').select('*').order('joined_at',{ascending:false}),
+    sb.from('activity_log').select('*').order('created_at',{ascending:false}).limit(300),
+    sb.from('car_listings').select('*').order('created_at',{ascending:false}),
+    sb.from('applications').select('*').order('created_at',{ascending:false})
+  ]);
+  allAgents=(agRes.data||[]).filter(function(a){ return a.role!=='admin'; });
+  allActivity=actRes.data||[];
+  allCars=carRes.data||[];
+  allApplications=appRes.data||[];
+  updateBadges();
+  renderOverview();
+}
+
+function updateBadges(){
+  var pendingAgents=allAgents.filter(function(a){ return a.status==='pending'; }).length;
+  $('tb-agents').textContent=pendingAgents;
+  $('tb-listings').textContent=allCars.length;
+  var pendingApps=allApplications.filter(function(a){ return a.status==='pending'||!a.status; }).length;
+  $('tb-apps').textContent=pendingApps;
+}
+
+// ── OVERVIEW ──
+function renderOverview(){
+  var pending=allAgents.filter(function(a){ return a.status==='pending'; }).length;
+  var sold=allCars.filter(function(c){ return c.status==='sold'; }).length;
+  var views=allCars.reduce(function(s,c){ return s+(c.views||0); },0);
+  var agentCars=allCars.filter(function(c){ return c.agent_id; }).length;
+  var thirtyDaysAgo=Date.now()-30*24*60*60*1000;
+  var recentAct=allActivity.filter(function(e){ return new Date(e.created_at).getTime()>thirtyDaysAgo; }).length;
+
+  $('ov-agents').textContent=allAgents.length;
+  $('ov-pending').textContent=pending;
+  $('ov-listings').textContent=allCars.length;
+  $('ov-apps').textContent=allApplications.length;
+  $('ov-views').textContent=views;
+  $('ov-sold').textContent=sold;
+  $('ov-act').textContent=recentAct;
+  $('ov-agentcars').textContent=agentCars;
+
+  // Pending approvals mini-list
+  var pendingAgents=allAgents.filter(function(a){ return a.status==='pending'; });
+  var pvEl=$('ov-pending-list');
+  if(!pendingAgents.length){
+    pvEl.innerHTML='<div class="empty"><i class="fas fa-check-circle" style="color:var(--green)"></i><p>No pending approvals.</p></div>';
+  } else {
+    pvEl.innerHTML=pendingAgents.map(function(a){
+      return '<div class="agent-item">'
+        +'<div class="avatar">'+initials(a.full_name)+'</div>'
+        +'<div class="a-info">'
+          +'<div class="a-name">'+(a.full_name||'Unnamed')+'</div>'
+          +'<div class="a-meta">'+(a.email||'')+(a.location?' · '+a.location:'')+'</div>'
+          +'<div class="a-actions">'
+            +'<button class="aa approve" onclick="approveAgent(\''+a.id+'\')">Approve</button>'
+            +'<button class="aa reject" onclick="rejectAgent(\''+a.id+'\')">Reject</button>'
+          +'</div>'
+        +'</div>'
+        +'<div class="a-right"><span class="badge pending">Pending</span></div>'
+      +'</div>';
+    }).join('');
+  }
+
+  // Recent activity (last 10)
+  var recent=allActivity.slice(0,10);
+  $('ov-act-count').textContent=recent.length+' recent';
+  var agentMap=buildAgentMap();
+  if(!recent.length){
+    $('ov-activity-feed').innerHTML='<div class="empty"><i class="fas fa-history"></i><p>No activity yet.</p></div>';
+  } else {
+    $('ov-activity-feed').innerHTML=recent.map(function(e){ return evRow(e,agentMap,false); }).join('');
+  }
+}
+
+// ── AGENTS ──
+function initials(name){
+  return (name||'?').split(' ').map(function(w){ return w[0]; }).join('').slice(0,2).toUpperCase();
+}
+function buildAgentMap(){
+  var m={};
+  allAgents.forEach(function(a){ m[a.id]=a; });
+  return m;
+}
+
+function renderAgents(){
+  var q=($('agent-search').value||'').toLowerCase();
+  var f=$('agent-filter').value;
+  var list=allAgents.filter(function(a){
+    if(f&&a.status!==f) return false;
+    if(q&&![a.full_name,a.email,a.location].join(' ').toLowerCase().includes(q)) return false;
+    return true;
+  });
+  $('agents-count').textContent=list.length+' agent'+(list.length!==1?'s':'');
+  var el=$('agent-list');
+  if(!list.length){
+    el.innerHTML='<div class="empty"><i class="fas fa-id-badge"></i><p>No agents found.</p></div>'; return;
+  }
+  el.innerHTML=list.map(function(a){
+    var cars=allCars.filter(function(c){ return c.agent_id===a.id; });
+    var sold=cars.filter(function(c){ return c.status==='sold'; }).length;
+    var acts=allActivity.filter(function(e){ return e.profile_id===a.id; }).length;
+    var btns='';
+    if(a.status==='pending')
+      btns='<button class="aa approve" onclick="approveAgent(\''+a.id+'\')">Approve</button>'
+          +'<button class="aa reject" onclick="rejectAgent(\''+a.id+'\')">Reject</button>';
+    else if(a.status==='approved')
+      btns='<button class="aa revoke" onclick="rejectAgent(\''+a.id+'\')">Revoke</button>';
+    else
+      btns='<button class="aa reapprove" onclick="approveAgent(\''+a.id+'\')">Re-approve</button>';
+
+    if(cars.length)
+      btns+='<button class="aa view-cars" onclick="viewAgentListings(\''+a.id+'\',\''+a.full_name.replace(/'/g,'')+'\')">'
+           +'<i class="fas fa-car"></i> '+cars.length+' cars</button>';
+
+    var viewAct='onclick="viewAgentActivity(\''+a.id+'\',\''+a.full_name.replace(/'/g,'')+'\')"';
+
+    return '<div class="agent-item" '+viewAct+'>'
+      +'<div class="avatar">'+initials(a.full_name)+'</div>'
+      +'<div class="a-info">'
+        +'<div class="a-name">'+(a.full_name||'Unnamed')+'</div>'
+        +'<div class="a-meta">'+(a.email||'')+(a.location?' · '+a.location:'')+'</div>'
+        +'<div class="a-actions" onclick="event.stopPropagation()">'+btns+'</div>'
+      +'</div>'
+      +'<div class="a-right">'
+        +'<span class="badge '+a.status+'">'+a.status+'</span>'
+        +'<span class="a-stat">'+cars.length+' listed · '+sold+' sold</span>'
+        +'<span class="a-stat">'+acts+' events</span>'
+        +'<span class="a-stat">'+fmtDate(a.joined_at)+'</span>'
+      +'</div>'
+    +'</div>';
+  }).join('');
+}
+
+// ── ACTIVITY ──
+var ACTION_ICON={login:'fa-sign-in-alt',logout:'fa-sign-out-alt',signup:'fa-user-plus',car_submitted:'fa-car',car_edited:'fa-pen'};
+var ACTION_LABEL={login:'Logged in',logout:'Logged out',signup:'Signed up',car_submitted:'Submitted a car',car_edited:'Edited a listing'};
+
+function evRow(e,agentMap,hideWho){
+  var agent=agentMap[e.profile_id];
+  var name=agent?(agent.full_name||agent.email||'Unknown'):'Unknown';
+  var icon=ACTION_ICON[e.action]||'fa-circle';
+  var cls='ev-'+(e.action||'other');
+  return '<div class="ev-row '+cls+'">'
+    +'<div class="ev-ico"><i class="fas '+icon+'"></i></div>'
+    +'<div class="ev-body">'
+      +(hideWho?'':'<div class="ev-who">'+name+'</div>')
+      +'<div class="ev-what">'+(ACTION_LABEL[e.action]||e.action)+'</div>'
+      +(e.detail?'<div class="ev-detail">'+e.detail+'</div>':'')
+    +'</div>'
+    +'<div class="ev-time">'+timeAgo(e.created_at)+'</div>'
+  +'</div>';
+}
+
+function renderFeed(){
+  var agentMap=buildAgentMap();
+  var events=allActivity;
+  if(filterAgentId) events=events.filter(function(e){ return e.profile_id===filterAgentId; });
+  if(actionFilter) events=events.filter(function(e){ return e.action===actionFilter; });
+
+  $('act-count').textContent=events.length+' event'+(events.length!==1?'s':'');
+  $('act-back-btn').style.display=filterAgentId?'flex':'none';
+  $('act-filter-bar').style.display=events.length||actionFilter?'flex':'none';
+
+  var feed=$('act-feed');
+  if(!events.length){
+    feed.innerHTML='<div class="empty"><i class="fas fa-history"></i>'
+      +'<p>'+(filterAgentId?'No activity for this agent yet.':'No activity recorded yet.')+'</p></div>';
+    return;
+  }
+  feed.innerHTML=events.map(function(e){ return evRow(e,agentMap,!!filterAgentId); }).join('');
+}
+
+function viewAgentActivity(id,name){
+  filterAgentId=id; filterAgentName=name; actionFilter=null;
+  $('act-title').textContent=name||'Agent Activity';
+  showTab('activity');
+}
+function clearAgentFilter(){
+  filterAgentId=null; filterAgentName=''; actionFilter=null;
+  $('act-title').textContent='All Activity';
+  renderFeed();
+}
+function toggleActionFilter(action){
+  actionFilter=actionFilter===action?null:action;
+  document.querySelectorAll('.feed-filter-bar .chip').forEach(function(c){ c.classList.remove('on'); });
+  if(actionFilter){
+    var chips=document.querySelectorAll('.feed-filter-bar .chip');
+    var actions=['login','car_submitted','car_edited'];
+    var idx=actions.indexOf(actionFilter);
+    if(idx>=0) chips[idx].classList.add('on');
+  }
+  renderFeed();
+}
+
+// ── LISTINGS ──
+function renderListings(){
+  var q=($('lst-search').value||'').toLowerCase();
+  var f=$('lst-filter').value;
+  var agentMap=buildAgentMap();
+
+  var list=allCars.filter(function(c){
+    if(filterListingAgentId&&c.agent_id!==filterListingAgentId) return false;
+    if(f&&c.status!==f) return false;
+    if(q&&![c.make,c.model,c.year+'',c.location].join(' ').toLowerCase().includes(q)) return false;
+    return true;
+  });
+
+  $('lst-count').textContent=list.length+' listing'+(list.length!==1?'s':'');
+  $('lst-back-btn').style.display=filterListingAgentId?'flex':'none';
+
+  var tbody=$('lst-tbody');
+  var empty=$('lst-empty');
+  if(!list.length){ tbody.innerHTML=''; empty.style.display='block'; return; }
+  empty.style.display='none';
+
+  tbody.innerHTML=list.map(function(c){
+    var thumb=c.images&&c.images[0]
+      ?'<img src="'+c.images[0]+'" class="car-thumb" onerror="this.style.display=\'none\'">'
+      :'<div class="car-thumb-ph"><i class="fas fa-car"></i></div>';
+    var agent=agentMap[c.agent_id];
+    var agentName=agent?agent.full_name:'Public';
+    var st=c.status==='sold'?'sold':'active';
+    return '<tr>'
+      +'<td>'+thumb+'</td>'
+      +'<td><div style="font-weight:600;font-size:.82rem">'+(c.year||'')+' '+c.make+' '+c.model+'</div>'
+         +'<div style="font-size:.7rem;color:var(--muted)">'+(c.transmission||'')+' · '+(c.fuel||'')+' · '+(c.location||'')+'</div></td>'
+      +'<td style="font-size:.75rem;color:var(--muted)">'+agentName+'</td>'
+      +'<td class="price-cell">'+fmtPrice(c.price)+'</td>'
+      +'<td><span class="stag '+st+'">'+st+'</span></td>'
+      +'<td><div class="eng"><span><i class="fas fa-eye"></i>'+(c.views||0)+'</span>'
+         +'<span><i class="fas fa-heart"></i>'+(c.likes||0)+'</span></div></td>'
+    +'</tr>';
+  }).join('');
+}
+
+function viewAgentListings(id,name){
+  filterListingAgentId=id;
+  $('lst-title').textContent=(name||'Agent')+' Listings';
+  showTab('listings');
+}
+function clearListingFilter(){
+  filterListingAgentId=null;
+  $('lst-title').textContent='All Listings';
+  renderListings();
+}
+
+// ── APPLICATIONS ──
+function renderApplications(){
+  var q=($('app-search').value||'').toLowerCase();
+  var f=$('app-filter').value;
+  var list=allApplications.filter(function(a){
+    var st=a.status||'pending';
+    if(f&&st!==f) return false;
+    if(q&&![a.first_name,a.last_name,a.email,a.location].join(' ').toLowerCase().includes(q)) return false;
+    return true;
+  });
+  $('app-count').textContent=list.length+' application'+(list.length!==1?'s':'');
+  var el=$('app-list');
+  if(!list.length){
+    el.innerHTML='<div class="empty"><i class="fas fa-users"></i><p>No applications found.</p></div>'; return;
+  }
+  el.innerHTML=list.map(function(a){
+    var st=a.status||'pending';
+    var name=(a.first_name||'')+' '+(a.last_name||'');
+    return '<div class="app-item">'
+      +'<div class="app-top">'
+        +'<span class="app-name">'+name.trim()+'</span>'
+        +'<span class="app-status '+st+'">'+st+'</span>'
+      +'</div>'
+      +'<div class="app-meta">'
+        +(a.email?'<i class="fas fa-envelope" style="margin-right:.3rem;color:var(--dim)"></i>'+a.email+'<br>':'')
+        +(a.phone?'<i class="fas fa-phone" style="margin-right:.3rem;color:var(--dim)"></i>'+a.phone+'<br>':'')
+        +(a.location?'<i class="fas fa-map-marker-alt" style="margin-right:.3rem;color:var(--dim)"></i>'+a.location+'<br>':'')
+        +(a.experience?'<i class="fas fa-briefcase" style="margin-right:.3rem;color:var(--dim)"></i>'+a.experience+'<br>':'')
+        +(a.message?'<span style="color:var(--muted)">'+a.message+'</span>':'')
+      +'</div>'
+      +'<div class="app-actions">'
+        +(st!=='approved'?'<button class="aa approve" onclick="updateApp(\''+a.id+'\',\'approved\')">Approve</button>':'')
+        +(st!=='rejected'?'<button class="aa reject" onclick="updateApp(\''+a.id+'\',\'rejected\')">Reject</button>':'')
+        +(st==='rejected'||st==='approved'?'<button class="aa reapprove" onclick="updateApp(\''+a.id+'\',\'pending\')">Reset</button>':'')
+      +'</div>'
+    +'</div>';
+  }).join('');
+}
+
+async function updateApp(id,status){
+  var {error}=await sb.from('applications').update({status:status}).eq('id',id);
+  if(error){ toast('Could not update application.','err'); return; }
+  toast('Application updated.','ok');
+  var idx=allApplications.findIndex(function(a){ return a.id===id; });
+  if(idx>=0) allApplications[idx].status=status;
+  updateBadges();
+  renderApplications();
+}
+
+// ── APPROVE / REJECT AGENTS ──
+async function approveAgent(id){
+  var {error}=await sb.from('agent_profiles').update({status:'approved'}).eq('id',id);
+  if(error){ toast('Could not approve agent.','err'); return; }
+  toast('Agent approved.','ok');
+  var idx=allAgents.findIndex(function(a){ return a.id===id; });
+  if(idx>=0) allAgents[idx].status='approved';
+  updateBadges(); renderOverview(); renderAgents();
+}
+async function rejectAgent(id){
+  if(!confirm("Revoke this agent's access?")) return;
+  var {error}=await sb.from('agent_profiles').update({status:'rejected'}).eq('id',id);
+  if(error){ toast('Could not update agent.','err'); return; }
+  toast('Agent access revoked.','ok');
+  var idx=allAgents.findIndex(function(a){ return a.id===id; });
+  if(idx>=0) allAgents[idx].status='rejected';
+  updateBadges(); renderOverview(); renderAgents();
+}
+</script>
+</body>
+</html>
