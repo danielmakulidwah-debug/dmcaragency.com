@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Agent Activity — DM Car Agency</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=Oswald:wght@500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#080808;--surface:#111;--surface2:#181818;--surface3:#1f1f1f;
+  --border:rgba(255,255,255,.07);--border2:rgba(255,255,255,.04);
+  --text:#f0ede8;--muted:#777;--dim:#333;
+  --flame:#e8491d;--gold:#c8973a;--green:#27ae60;--red:#e74c3c;--blue:#3498db;
+  --fh:'Oswald',sans-serif;--fb:'DM Sans',sans-serif;
+}
+html,body{height:100%;font-family:var(--fb);background:var(--bg);color:var(--text)}
+body{display:flex;flex-direction:column;min-height:100vh}
+
+/* ── LOGIN ── */
+#loginWrap{flex:1;display:flex;align-items:center;justify-content:center;padding:2rem}
+.login-card{background:var(--surface);border:1px solid var(--border);border-radius:6px;
+  padding:2.25rem 2rem;width:100%;max-width:380px}
+.login-logo{font-family:var(--fh);font-size:1.3rem;letter-spacing:2px;margin-bottom:.35rem}
+.login-logo span{color:var(--flame)}
+.login-sub{font-size:.78rem;color:var(--muted);margin-bottom:1.75rem}
+.fl{display:block;font-size:.68rem;letter-spacing:1.5px;text-transform:uppercase;
+  color:var(--muted);margin-bottom:.4rem;margin-top:1rem}
+.fi{width:100%;background:var(--surface2);border:1px solid var(--border);
+  color:var(--text);padding:.7rem .85rem;border-radius:4px;font-size:.9rem;font-family:var(--fb)}
+.fi:focus{outline:none;border-color:var(--flame)}
+.fb{width:100%;margin-top:1.5rem;background:var(--flame);color:#fff;border:none;
+  padding:.8rem;border-radius:4px;font-family:var(--fh);letter-spacing:2px;
+  font-size:.8rem;text-transform:uppercase;cursor:pointer;transition:opacity .2s}
+.fb:hover{opacity:.88}
+.fb:disabled{opacity:.5;cursor:not-allowed}
+.ferr{margin-top:.9rem;font-size:.82rem;padding:.65rem .85rem;border-radius:4px;
+  background:rgba(231,76,60,.1);border:1px solid rgba(231,76,60,.25);
+  color:#ff8a65;display:none}
+.ferr.show{display:block}
+
+/* ── APP SHELL ── */
+#app{display:none;flex-direction:column;flex:1;overflow:hidden}
+
+/* header */
+.hdr{background:var(--surface);border-bottom:1px solid var(--border);
+  padding:.85rem 1.25rem;display:flex;align-items:center;justify-content:space-between;
+  flex-shrink:0}
+.hdr-logo{font-family:var(--fh);font-size:1.1rem;letter-spacing:2px}
+.hdr-logo span{color:var(--flame)}
+.hdr-right{display:flex;align-items:center;gap:.75rem;font-size:.8rem;color:var(--muted)}
+.hdr-right b{color:var(--text)}
+.out-btn{background:transparent;border:1px solid var(--border);color:var(--muted);
+  padding:.4rem .75rem;border-radius:4px;font-size:.75rem;cursor:pointer;transition:.2s}
+.out-btn:hover{border-color:var(--red);color:var(--red)}
+
+/* scrollable body */
+.body{flex:1;overflow-y:auto;padding:1.25rem;display:flex;flex-direction:column;gap:1.25rem}
+
+/* ── STAT STRIP ── */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;
+  background:var(--border);border:1px solid var(--border);border-radius:6px;overflow:hidden;
+  flex-shrink:0}
+.stat{background:var(--surface);padding:1rem 1.1rem}
+.stat-lbl{font-size:.65rem;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-bottom:.35rem}
+.stat-val{font-family:var(--fh);font-size:1.6rem}
+.stat-val.g{color:var(--green)}
+.stat-val.f{color:var(--flame)}
+.stat-val.gold{color:var(--gold)}
+@media(max-width:500px){.stats{grid-template-columns:1fr 1fr}}
+
+/* ── CARD ── */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:6px;overflow:hidden}
+.card-head{padding:.85rem 1.1rem;border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between}
+.card-title{font-family:var(--fh);font-size:.9rem;letter-spacing:1px;text-transform:uppercase}
+.card-count{font-size:.75rem;color:var(--muted)}
+
+/* ── AGENT LIST ── */
+.agent-item{padding:.9rem 1.1rem;border-bottom:1px solid var(--border2);
+  display:flex;align-items:center;gap:.85rem;cursor:pointer;transition:background .15s}
+.agent-item:last-child{border-bottom:none}
+.agent-item:hover,.agent-item.active{background:var(--surface2)}
+.agent-avatar{width:36px;height:36px;border-radius:50%;background:var(--surface3);
+  display:flex;align-items:center;justify-content:center;font-family:var(--fh);
+  font-size:.95rem;color:var(--muted);flex-shrink:0}
+.agent-info{flex:1;min-width:0}
+.agent-name{font-weight:600;font-size:.88rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.agent-meta{font-size:.72rem;color:var(--muted);margin-top:.1rem}
+.agent-right{display:flex;flex-direction:column;align-items:flex-end;gap:.3rem;flex-shrink:0}
+.badge{font-size:.62rem;padding:.2rem .5rem;border-radius:3px;text-transform:uppercase;
+  font-weight:600;letter-spacing:.5px}
+.badge.pending{background:rgba(200,151,58,.15);color:var(--gold)}
+.badge.approved{background:rgba(39,174,96,.15);color:var(--green)}
+.badge.rejected{background:rgba(231,76,60,.15);color:var(--red)}
+.agent-stats{font-size:.7rem;color:var(--muted)}
+
+/* ── ACTIVITY FEED ── */
+.feed-filter{padding:.7rem 1.1rem;border-bottom:1px solid var(--border);
+  display:flex;align-items:center;gap:.6rem;flex-wrap:wrap}
+.feed-filter-label{font-size:.75rem;color:var(--muted)}
+.filter-chip{font-size:.72rem;padding:.3rem .65rem;border-radius:20px;
+  border:1px solid var(--border);color:var(--muted);background:transparent;
+  cursor:pointer;transition:.15s}
+.filter-chip.active,.filter-chip:hover{border-color:var(--flame);color:var(--flame)}
+.filter-chip.clear-chip{border-color:var(--dim)}
+.filter-chip.clear-chip:hover{border-color:var(--red);color:var(--red)}
+
+.event-row{padding:.8rem 1.1rem;border-bottom:1px solid var(--border2);
+  display:flex;align-items:flex-start;gap:.85rem}
+.event-row:last-child{border-bottom:none}
+.event-icon{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;
+  justify-content:center;font-size:.75rem;flex-shrink:0;margin-top:.1rem}
+.ev-login .event-icon{background:rgba(39,174,96,.12);color:var(--green)}
+.ev-logout .event-icon{background:rgba(119,119,119,.12);color:var(--muted)}
+.ev-signup .event-icon{background:rgba(200,151,58,.12);color:var(--gold)}
+.ev-car_submitted .event-icon{background:rgba(232,73,29,.12);color:var(--flame)}
+.ev-car_edited .event-icon{background:rgba(52,152,219,.12);color:var(--blue)}
+.event-body{flex:1;min-width:0}
+.event-who{font-size:.82rem;font-weight:600}
+.event-what{font-size:.78rem;color:var(--muted);margin-top:.1rem}
+.event-detail{font-size:.72rem;color:var(--dim);margin-top:.1rem;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.event-time{font-size:.7rem;color:var(--dim);flex-shrink:0;margin-top:.15rem}
+
+/* ── APPROVE/REJECT BUTTONS ── */
+.agent-actions{display:flex;gap:.4rem;margin-top:.25rem}
+.aa-btn{font-size:.65rem;padding:.25rem .55rem;border-radius:3px;border:none;
+  cursor:pointer;font-family:var(--fb);font-weight:600;text-transform:uppercase;
+  letter-spacing:.5px;transition:opacity .2s}
+.aa-btn:hover{opacity:.8}
+.aa-approve{background:rgba(39,174,96,.2);color:var(--green)}
+.aa-reject{background:rgba(231,76,60,.2);color:var(--red)}
+.aa-revoke{background:rgba(231,76,60,.15);color:var(--red)}
+.aa-reapprove{background:rgba(39,174,96,.15);color:var(--green)}
+
+/* ── EMPTY ── */
+.empty{padding:2.5rem 1.5rem;text-align:center;color:var(--muted)}
+.empty i{font-size:1.75rem;display:block;margin-bottom:.75rem;color:var(--dim)}
+.empty p{font-size:.85rem;line-height:1.6}
+
+/* ── TOAST ── */
+.toast{position:fixed;bottom:1.25rem;left:50%;transform:translateX(-50%);
+  background:var(--surface2);border:1px solid var(--border);border-radius:5px;
+  padding:.75rem 1.1rem;font-size:.82rem;display:none;align-items:center;
+  gap:.6rem;z-index:999;box-shadow:0 8px 24px rgba(0,0,0,.5);white-space:nowrap}
+.toast.show{display:flex}
+.toast.ok i{color:var(--green)}
+.toast.err i{color:var(--red)}
+
+/* ── MOBILE LAYOUT ── */
+@media(max-width:700px){
+  .two-panel{flex-direction:column}
+  .agents-col{width:100%!important;border-right:none!important;
+    border-bottom:1px solid var(--border)}
+  .activity-col{width:100%!important}
+}
+.two-panel{display:flex;flex:1;min-height:0;overflow:hidden}
+.agents-col{width:320px;flex-shrink:0;border-right:1px solid var(--border);
+  overflow-y:auto;display:flex;flex-direction:column}
+.activity-col{flex:1;overflow-y:auto;display:flex;flex-direction:column}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="loginWrap">
+  <div class="login-card">
+    <div class="login-logo">DM CAR <span>AGENCY</span></div>
+    <div class="login-sub">Agent Activity Monitor — Admin only</div>
+    <label class="fl">Email</label>
+    <input class="fi" type="email" id="lEmail" autocomplete="email">
+    <label class="fl">Password</label>
+    <input class="fi" type="password" id="lPass" autocomplete="current-password"
+      onkeydown="if(event.key==='Enter')login()">
+    <button class="fb" id="lBtn" onclick="login()">
+      <i class="fas fa-lock-open"></i> &nbsp;Access Dashboard
+    </button>
+    <div class="ferr" id="lErr"></div>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app">
+  <div class="hdr">
+    <div class="hdr-logo">DM CAR <span>AGENCY</span> <span style="font-size:.65rem;color:var(--muted);letter-spacing:3px;margin-left:.5rem">AGENT MONITOR</span></div>
+    <div class="hdr-right">
+      Admin: <b id="adminName">—</b>
+      <button class="out-btn" onclick="logout()"><i class="fas fa-sign-out-alt"></i></button>
+    </div>
+  </div>
+
+  <div class="body" id="appBody">
+
+    <!-- Stats -->
+    <div class="stats">
+      <div class="stat"><div class="stat-lbl">Total Agents</div><div class="stat-val" id="sTot">—</div></div>
+      <div class="stat"><div class="stat-lbl">Pending</div><div class="stat-val gold" id="sPend">—</div></div>
+      <div class="stat"><div class="stat-lbl">Approved</div><div class="stat-val g" id="sAppr">—</div></div>
+      <div class="stat"><div class="stat-lbl">Activity (30d)</div><div class="stat-val f" id="sAct">—</div></div>
+    </div>
+
+    <!-- Two-panel: agents list + activity feed -->
+    <div class="two-panel card" style="flex:1;min-height:400px">
+
+      <!-- Left: agents -->
+      <div class="agents-col">
+        <div class="card-head">
+          <span class="card-title">Agents</span>
+          <span class="card-count" id="agentCount">—</span>
+        </div>
+        <div id="agentList"></div>
+      </div>
+
+      <!-- Right: activity feed -->
+      <div class="activity-col">
+        <div class="card-head">
+          <span class="card-title" id="feedTitle">All Activity</span>
+          <span class="card-count" id="feedCount">—</span>
+        </div>
+        <div class="feed-filter" id="feedFilter" style="display:none">
+          <span class="feed-filter-label">Filter:</span>
+          <button class="filter-chip clear-chip" onclick="clearAgentFilter()">
+            <i class="fas fa-times"></i> Show All
+          </button>
+        </div>
+        <div id="activityFeed" style="flex:1"></div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"><i class="fas fa-check-circle"></i><span id="toastMsg"></span></div>
+
+<script>
+const SUPABASE_URL  = 'https://ospebrnwdvhuituoyxlw.supabase.co';
+const SUPABASE_ANON = 'sb_publishable_k7BrujJj8-zWKaLoHr1gfA_WRn_KWlQ';
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
+
+let currentAdmin = null;
+let allAgents = [];
+let allActivity = [];
+let allCars = [];
+let filterAgentId = null;
+
+function $(id){ return document.getElementById(id); }
+
+function timeAgo(ts){
+  const s = Math.floor((Date.now() - new Date(ts).getTime()) / 1000);
+  if(s < 60) return 'just now';
+  if(s < 3600) return Math.floor(s/60) + 'm ago';
+  if(s < 86400) return Math.floor(s/3600) + 'h ago';
+  return Math.floor(s/86400) + 'd ago';
+}
+function fmtPrice(n){
+  const v = parseFloat(n)||0;
+  if(v>=1000000) return 'MWK '+(v/1000000).toFixed(1)+'M';
+  if(v>=1000) return 'MWK '+(v/1000).toFixed(0)+'k';
+  return 'MWK '+v.toLocaleString();
+}
+function toast(msg, type){
+  type = type||'ok';
+  $('toastMsg').textContent = msg;
+  const t = $('toast');
+  t.className = 'toast show '+type;
+  t.querySelector('i').className = type==='ok' ? 'fas fa-check-circle' : 'fas fa-exclamation-circle';
+  clearTimeout(window._tt);
+  window._tt = setTimeout(function(){ t.className='toast'; }, 3000);
+}
+
+// ── LOGIN ──
+async function login(){
+  const email = $('lEmail').value.trim();
+  const pass  = $('lPass').value;
+  const btn   = $('lBtn');
+  const err   = $('lErr');
+  err.className = 'ferr';
+
+  if(!email||!pass){
+    err.textContent='Enter email and password.';
+    err.className='ferr show'; return;
+  }
+
+  btn.disabled=true;
+  btn.innerHTML='<i class="fas fa-circle-notch fa-spin"></i> &nbsp;Checking...';
+
+  try{
+    const {data,error} = await sb.auth.signInWithPassword({email,password:pass});
+    if(error) throw error;
+
+    const {data:profile,error:pe} = await sb
+      .from('agent_profiles').select('*').eq('id',data.user.id).single();
+
+    if(pe||!profile) throw new Error('No profile found for this account.');
+    if(profile.role!=='admin'||profile.status!=='approved')
+      throw new Error('This account does not have admin access.');
+
+    currentAdmin = profile;
+    $('adminName').textContent = profile.full_name||email;
+    $('loginWrap').style.display='none';
+    $('app').style.display='flex';
+    loadAll();
+
+  }catch(e){
+    let msg = e.message||'Login failed.';
+    if(msg.toLowerCase().includes('invalid login credentials')) msg='Incorrect email or password.';
+    err.textContent=msg;
+    err.className='ferr show';
+  }finally{
+    btn.disabled=false;
+    btn.innerHTML='<i class="fas fa-lock-open"></i> &nbsp;Access Dashboard';
+  }
+}
+
+async function logout(){
+  await sb.auth.signOut();
+  currentAdmin=null; filterAgentId=null;
+  $('loginWrap').style.display='flex';
+  $('app').style.display='none';
+}
+
+// Resume session on page load
+(async function(){
+  const {data} = await sb.auth.getSession();
+  if(!data.session) return;
+  const {data:p} = await sb.from('agent_profiles').select('*').eq('id',data.session.user.id).single();
+  if(p&&p.role==='admin'&&p.status==='approved'){
+    currentAdmin=p;
+    $('adminName').textContent=p.full_name||data.session.user.email;
+    $('loginWrap').style.display='none';
+    $('app').style.display='flex';
+    loadAll();
+  }
+})();
+
+// ── DATA ──
+async function loadAll(){
+  const [agentRes, actRes, carRes] = await Promise.all([
+    sb.from('agent_profiles').select('*').order('joined_at',{ascending:false}),
+    sb.from('activity_log').select('*').order('created_at',{ascending:false}).limit(200),
+    sb.from('car_listings').select('id,agent_id,status,make,model,year').not('agent_id','is',null)
+  ]);
+
+  allAgents   = (agentRes.data||[]).filter(a=>a.role!=='admin');
+  allActivity = actRes.data||[];
+  allCars     = carRes.data||[];
+
+  renderStats();
+  renderAgents();
+  renderFeed();
+}
+
+function renderStats(){
+  const total   = allAgents.length;
+  const pending = allAgents.filter(a=>a.status==='pending').length;
+  const approved= allAgents.filter(a=>a.status==='approved').length;
+  const thirtyDaysAgo = Date.now() - 30*24*60*60*1000;
+  const recent  = allActivity.filter(e=>new Date(e.created_at).getTime()>thirtyDaysAgo).length;
+
+  $('sTot').textContent  = total;
+  $('sPend').textContent = pending;
+  $('sAppr').textContent = approved;
+  $('sAct').textContent  = recent;
+}
+
+function renderAgents(){
+  const list = $('agentList');
+  $('agentCount').textContent = allAgents.length + ' agent'+(allAgents.length!==1?'s':'');
+
+  if(!allAgents.length){
+    list.innerHTML = '<div class="empty"><i class="fas fa-id-badge"></i><p>No agents signed up yet.</p></div>';
+    return;
+  }
+
+  const agentMap = {};
+  allAgents.forEach(a=>{ agentMap[a.id]=a; });
+
+  list.innerHTML = allAgents.map(function(a){
+    const initials = (a.full_name||'?').split(' ').map(function(w){ return w[0]; }).join('').slice(0,2).toUpperCase();
+    const cars  = allCars.filter(function(c){ return c.agent_id===a.id; });
+    const sold  = cars.filter(function(c){ return c.status==='sold'; }).length;
+    const acts  = allActivity.filter(function(e){ return e.profile_id===a.id; }).length;
+
+    let actionBtns = '';
+    if(a.status==='pending'){
+      actionBtns = '<div class="agent-actions">'
+        +'<button class="aa-btn aa-approve" onclick="event.stopPropagation();approveAgent(\''+a.id+'\')">Approve</button>'
+        +'<button class="aa-btn aa-reject" onclick="event.stopPropagation();rejectAgent(\''+a.id+'\')">Reject</button>'
+        +'</div>';
+    } else if(a.status==='approved'){
+      actionBtns = '<div class="agent-actions">'
+        +'<button class="aa-btn aa-revoke" onclick="event.stopPropagation();rejectAgent(\''+a.id+'\')">Revoke</button>'
+        +'</div>';
+    } else {
+      actionBtns = '<div class="agent-actions">'
+        +'<button class="aa-btn aa-reapprove" onclick="event.stopPropagation();approveAgent(\''+a.id+'\')">Re-approve</button>'
+        +'</div>';
+    }
+
+    const isActive = filterAgentId===a.id ? ' active' : '';
+
+    return '<div class="agent-item'+isActive+'" onclick="filterByAgent(\''+a.id+'\',\''+a.full_name.replace(/'/g,'')+'\')">'
+      +'<div class="agent-avatar">'+initials+'</div>'
+      +'<div class="agent-info">'
+        +'<div class="agent-name">'+(a.full_name||'Unnamed')+'</div>'
+        +'<div class="agent-meta">'+(a.email||'')+(a.location?' · '+a.location:'')+'</div>'
+        +actionBtns
+      +'</div>'
+      +'<div class="agent-right">'
+        +'<span class="badge '+a.status+'">'+a.status+'</span>'
+        +'<span class="agent-stats">'+cars.length+' listed · '+sold+' sold</span>'
+        +'<span class="agent-stats">'+acts+' events</span>'
+      +'</div>'
+    +'</div>';
+  }).join('');
+}
+
+const ACTION_ICON = {
+  login:'fa-sign-in-alt', logout:'fa-sign-out-alt', signup:'fa-user-plus',
+  car_submitted:'fa-car', car_edited:'fa-pen'
+};
+
+function renderFeed(){
+  const agentMap = {};
+  allAgents.forEach(function(a){ agentMap[a.id]=a; });
+
+  let events = allActivity;
+  if(filterAgentId) events = events.filter(function(e){ return e.profile_id===filterAgentId; });
+
+  $('feedCount').textContent = events.length+' event'+(events.length!==1?'s':'');
+  $('feedFilter').style.display = filterAgentId ? 'flex' : 'none';
+
+  const feed = $('activityFeed');
+  if(!events.length){
+    feed.innerHTML = '<div class="empty"><i class="fas fa-history"></i>'
+      +'<p>'+(filterAgentId?'No activity for this agent yet.':'No activity recorded yet.')+'</p></div>';
+    return;
+  }
+
+  feed.innerHTML = events.map(function(e){
+    const agent = agentMap[e.profile_id];
+    const name  = agent ? (agent.full_name||agent.email||'Unknown') : 'Unknown';
+    const icon  = ACTION_ICON[e.action]||'fa-circle';
+    const cls   = 'ev-'+(e.action||'other');
+    return '<div class="event-row '+cls+'">'
+      +'<div class="event-icon"><i class="fas '+icon+'"></i></div>'
+      +'<div class="event-body">'
+        +(filterAgentId?'':'<div class="event-who">'+name+'</div>')
+        +'<div class="event-what">'+formatAction(e.action)+'</div>'
+        +(e.detail?'<div class="event-detail">'+e.detail+'</div>':'')
+      +'</div>'
+      +'<div class="event-time">'+timeAgo(e.created_at)+'</div>'
+    +'</div>';
+  }).join('');
+}
+
+function formatAction(a){
+  const map = {
+    login:'Logged in', logout:'Logged out', signup:'Signed up',
+    car_submitted:'Submitted a car', car_edited:'Edited a listing'
+  };
+  return map[a]||a;
+}
+
+function filterByAgent(id, name){
+  filterAgentId = id;
+  $('feedTitle').textContent = name||'Agent Activity';
+  renderAgents();
+  renderFeed();
+}
+function clearAgentFilter(){
+  filterAgentId = null;
+  $('feedTitle').textContent = 'All Activity';
+  renderAgents();
+  renderFeed();
+}
+
+// ── APPROVE / REJECT ──
+async function approveAgent(id){
+  const {error} = await sb.from('agent_profiles').update({status:'approved'}).eq('id',id);
+  if(error){ toast('Could not approve agent.','err'); return; }
+  toast('Agent approved.','ok');
+  await loadAll();
+}
+async function rejectAgent(id){
+  if(!confirm("Revoke this agent's access?")) return;
+  const {error} = await sb.from('agent_profiles').update({status:'rejected'}).eq('id',id);
+  if(error){ toast('Could not update agent.','err'); return; }
+  toast('Agent access revoked.','ok');
+  await loadAll();
+}
+</script>
+</body>
+</html>
