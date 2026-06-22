@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Confirm Email — DM Car Agency</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=Oswald:wght@500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#080808;--surface:#111;--border:rgba(255,255,255,.07);
+  --text:#f0ede8;--muted:#777;
+  --flame:#e8491d;--gold:#c8973a;--green:#27ae60;--red:#e74c3c;
+  --fh:'Oswald',sans-serif;--fb:'DM Sans',sans-serif;
+}
+body{font-family:var(--fb);background:var(--bg);color:var(--text);
+  min-height:100vh;display:flex;align-items:center;justify-content:center;padding:2rem}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:6px;
+  padding:2.5rem 2rem;width:100%;max-width:400px;text-align:center}
+.logo{font-family:var(--fh);font-size:1.3rem;letter-spacing:2px;margin-bottom:2rem}
+.logo span{color:var(--flame)}
+.icon{font-size:3rem;margin-bottom:1.25rem}
+.icon.spin{animation:spin 1s linear infinite;display:inline-block}
+@keyframes spin{to{transform:rotate(360deg)}}
+h1{font-family:var(--fh);font-size:1.4rem;letter-spacing:1px;margin-bottom:.75rem}
+p{font-size:.88rem;color:var(--muted);line-height:1.65;margin-bottom:1.5rem}
+.btn{display:inline-block;background:var(--flame);color:#fff;border:none;
+  padding:.8rem 2rem;border-radius:4px;font-family:var(--fh);letter-spacing:2px;
+  font-size:.8rem;text-transform:uppercase;cursor:pointer;text-decoration:none;
+  transition:opacity .2s;margin-top:.5rem}
+.btn:hover{opacity:.88}
+.btn.secondary{background:transparent;border:1px solid var(--border);color:var(--muted);margin-left:.5rem}
+.btn.secondary:hover{border-color:var(--flame);color:var(--flame)}
+.countdown{font-size:.78rem;color:var(--muted);margin-top:1rem}
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="logo">DM CAR <span>AGENCY</span></div>
+
+  <!-- LOADING STATE -->
+  <div id="stateLoading">
+    <div class="icon spin" style="color:var(--gold)"><i class="fas fa-circle-notch"></i></div>
+    <h1>Verifying your email…</h1>
+    <p>Please wait while we confirm your account.</p>
+  </div>
+
+  <!-- SUCCESS STATE -->
+  <div id="stateSuccess" style="display:none">
+    <div class="icon" style="color:var(--green)"><i class="fas fa-check-circle"></i></div>
+    <h1>Email Confirmed!</h1>
+    <p>Your email address has been verified successfully.<br><br>
+      Your account is now <strong style="color:var(--gold)">pending admin approval</strong>.
+      You'll be able to log in once an admin reviews and approves your account.</p>
+    <a href="agent-login.html" class="btn">Go to Login</a>
+    <div class="countdown" id="countdown">Redirecting in 5 seconds…</div>
+  </div>
+
+  <!-- ALREADY CONFIRMED STATE -->
+  <div id="stateAlready" style="display:none">
+    <div class="icon" style="color:var(--green)"><i class="fas fa-check-circle"></i></div>
+    <h1>Already Confirmed</h1>
+    <p>Your email is already verified. If you've been approved by an admin, you can log in now.</p>
+    <a href="agent-login.html" class="btn">Go to Login</a>
+  </div>
+
+  <!-- ERROR STATE -->
+  <div id="stateError" style="display:none">
+    <div class="icon" style="color:var(--red)"><i class="fas fa-times-circle"></i></div>
+    <h1>Link Expired</h1>
+    <p id="errorMsg">This confirmation link has expired or is invalid. Please sign up again or request a new confirmation email.</p>
+    <a href="agent-signup.html" class="btn">Sign Up Again</a>
+    <a href="agent-login.html" class="btn secondary">Try Login</a>
+  </div>
+
+</div>
+
+<script>
+const SUPABASE_URL  = 'https://ospebrnwdvhuituoyxlw.supabase.co';
+const SUPABASE_ANON = 'sb_publishable_k7BrujJj8-zWKaLoHr1gfA_WRn_KWlQ';
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
+
+function show(id) {
+  ['stateLoading','stateSuccess','stateAlready','stateError'].forEach(function(s){
+    document.getElementById(s).style.display = s === id ? 'block' : 'none';
+  });
+}
+
+function startCountdown() {
+  var n = 5;
+  var el = document.getElementById('countdown');
+  var t = setInterval(function(){
+    n--;
+    if (n <= 0) {
+      clearInterval(t);
+      window.location.href = 'agent-login.html';
+    } else {
+      el.textContent = 'Redirecting in ' + n + ' second' + (n !== 1 ? 's' : '') + '…';
+    }
+  }, 1000);
+}
+
+async function handleConfirmation() {
+  // Supabase puts the token info in the URL hash or query string
+  // depending on the link type. We handle both.
+  var hash = window.location.hash.substring(1);
+  var query = window.location.search.substring(1);
+  var params = new URLSearchParams(hash || query);
+
+  var accessToken  = params.get('access_token');
+  var refreshToken = params.get('refresh_token');
+  var type         = params.get('type');
+  var tokenHash    = params.get('token_hash');
+  var errorDesc    = params.get('error_description') || params.get('error');
+
+  // If Supabase returned an error in the URL
+  if (errorDesc) {
+    document.getElementById('errorMsg').textContent = decodeURIComponent(errorDesc);
+    show('stateError');
+    return;
+  }
+
+  try {
+    var result;
+
+    if (tokenHash && type) {
+      // New Supabase PKCE flow (token_hash in URL)
+      result = await sb.auth.verifyOtp({ token_hash: tokenHash, type: type });
+
+    } else if (accessToken && refreshToken) {
+      // Legacy flow — set the session directly
+      result = await sb.auth.setSession({
+        access_token: accessToken,
+        refresh_token: refreshToken
+      });
+
+    } else {
+      // No token found — maybe they already confirmed, or landed here directly
+      var session = await sb.auth.getSession();
+      if (session.data && session.data.session) {
+        show('stateAlready');
+      } else {
+        show('stateError');
+      }
+      return;
+    }
+
+    if (result.error) {
+      // Token expired or already used
+      var msg = result.error.message || '';
+      if (msg.toLowerCase().includes('expired') || msg.toLowerCase().includes('already')) {
+        show('stateAlready');
+      } else {
+        document.getElementById('errorMsg').textContent = msg || 'Invalid or expired link.';
+        show('stateError');
+      }
+      return;
+    }
+
+    // Success — update agent_profiles to mark email confirmed
+    if (result.data && result.data.user) {
+      var userId = result.data.user.id;
+      await sb.from('agent_profiles')
+        .update({ email_confirmed: true })
+        .eq('id', userId)
+        .then(function(){}, function(){});
+    }
+
+    show('stateSuccess');
+    startCountdown();
+    // Sign out so they go through the login flow properly
+    setTimeout(function(){ sb.auth.signOut(); }, 500);
+
+  } catch(e) {
+    console.error(e);
+    document.getElementById('errorMsg').textContent = e.message || 'Something went wrong. Please try again.';
+    show('stateError');
+  }
+}
+
+handleConfirmation();
+</script>
+</body>
+</html>
