@@ -1,12 +1,74 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Agent Sign Up — DM Car Agency</title>
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=Oswald:wght@500;600&display=swap" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<style>
+<!DOCTYPE 
+html
+>
+
+<
+html
+ 
+lang
+=
+"en"
+>
+
+<
+head
+>
+
+<
+meta
+ 
+charset
+=
+"UTF-8"
+>
+
+<
+meta
+ 
+name
+=
+"viewport"
+ 
+content
+=
+"width=device-width, initial-scale=1.0"
+>
+
+<
+title
+>
+Agent Sign Up — DM Car Agency
+</
+title
+>
+
+<
+link
+ 
+href
+=
+"https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=Oswald:wght@500;600&display=swap"
+ 
+rel
+=
+"stylesheet"
+>
+
+<
+script
+ 
+src
+=
+"https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"
+>
+</
+script
+>
+
+<
+style
+>
+
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
 body{font-family:'DM Sans',sans-serif;background:#080808;color:#f0ede8;
   min-height:100vh;display:flex;align-items:center;justify-content:center;padding:1.5rem}
@@ -35,50 +97,374 @@ body{font-family:'DM Sans',sans-serif;background:#080808;color:#f0ede8;
   color:#ff8a65;display:block}
 .foot{text-align:center;margin-top:1.25rem;font-size:.82rem;color:#555}
 .foot a{color:#c8973a;text-decoration:none}
-</style>
-</head>
-<body>
-<div class="card">
-  <div class="logo">DM CAR <span>AGENCY</span></div>
-  <div class="sub">Agent Sign Up</div>
+</
+style
+>
 
-  <div id="formWrap">
-    <label class="fl">Full Name *</label>
-    <input class="fi" type="text" id="f-name" autocomplete="name" placeholder="Your full name">
+</
+head
+>
 
-    <label class="fl">Email *</label>
-    <input class="fi" type="email" id="f-email" autocomplete="email" placeholder="your@email.com">
+<
+body
+>
 
-    <label class="fl">Phone *</label>
-    <input class="fi" type="tel" id="f-phone" autocomplete="tel" placeholder="+265 xxx xxx xxx">
+<
+div
+ 
+class
+=
+"card"
+>
 
-    <label class="fl">Location</label>
-    <input class="fi" type="text" id="f-location" placeholder="e.g. Blantyre">
+  
+<
+div
+ 
+class
+=
+"logo"
+>
+DM CAR 
+<
+span
+>
+AGENCY
+</
+span
+>
+</
+div
+>
 
-    <label class="fl">Password *</label>
-    <input class="fi" type="password" id="f-pass" autocomplete="new-password" placeholder="Minimum 6 characters">
+  
+<
+div
+ 
+class
+=
+"sub"
+>
+Agent Sign Up
+</
+div
+>
 
-    <label class="fl">Confirm Password *</label>
-    <input class="fi" type="password" id="f-pass2" autocomplete="new-password" placeholder="Repeat password">
+  
+<
+div
+ 
+id
+=
+"formWrap"
+>
 
-    <button class="btn" id="submitBtn" onclick="doSignup()">Create Account</button>
-    <div class="msg" id="msg"></div>
-  </div>
+    
+<
+label
+ 
+class
+=
+"fl"
+>
+Full Name *
+</
+label
+>
 
-  <div class="foot">Already have an account? <a href="agent-login.html">Log in</a></div>
-</div>
+    
+<
+input
+ 
+class
+=
+"fi"
+ 
+type
+=
+"text"
+ 
+id
+=
+"f-name"
+ 
+autocomplete
+=
+"name"
+ 
+placeholder
+=
+"Your full name"
+>
 
-<script>
+    
+<
+label
+ 
+class
+=
+"fl"
+>
+Email *
+</
+label
+>
+
+    
+<
+input
+ 
+class
+=
+"fi"
+ 
+type
+=
+"email"
+ 
+id
+=
+"f-email"
+ 
+autocomplete
+=
+"email"
+ 
+placeholder
+=
+"your@email.com"
+>
+
+    
+<
+label
+ 
+class
+=
+"fl"
+>
+Phone *
+</
+label
+>
+
+    
+<
+input
+ 
+class
+=
+"fi"
+ 
+type
+=
+"tel"
+ 
+id
+=
+"f-phone"
+ 
+autocomplete
+=
+"tel"
+ 
+placeholder
+=
+"+265 xxx xxx xxx"
+>
+
+    
+<
+label
+ 
+class
+=
+"fl"
+>
+Location
+</
+label
+>
+
+    
+<
+input
+ 
+class
+=
+"fi"
+ 
+type
+=
+"text"
+ 
+id
+=
+"f-location"
+ 
+placeholder
+=
+"e.g. Blantyre"
+>
+
+    
+<
+label
+ 
+class
+=
+"fl"
+>
+Password *
+</
+label
+>
+
+    
+<
+input
+ 
+class
+=
+"fi"
+ 
+type
+=
+"password"
+ 
+id
+=
+"f-pass"
+ 
+autocomplete
+=
+"new-password"
+ 
+placeholder
+=
+"Minimum 6 characters"
+>
+
+    
+<
+label
+ 
+class
+=
+"fl"
+>
+Confirm Password *
+</
+label
+>
+
+    
+<
+input
+ 
+class
+=
+"fi"
+ 
+type
+=
+"password"
+ 
+id
+=
+"f-pass2"
+ 
+autocomplete
+=
+"new-password"
+ 
+placeholder
+=
+"Repeat password"
+>
+
+    
+<
+button
+ 
+class
+=
+"btn"
+ 
+id
+=
+"submitBtn"
+ 
+onclick
+=
+"doSignup()"
+>
+Create Account
+</
+button
+>
+
+    
+<
+div
+ 
+class
+=
+"msg"
+ 
+id
+=
+"msg"
+>
+</
+div
+>
+
+  
+</
+div
+>
+
+  
+<
+div
+ 
+class
+=
+"foot"
+>
+Already have an account? 
+<
+a
+ 
+href
+=
+"agent-login.html"
+>
+Log in
+</
+a
+>
+</
+div
+>
+
+</
+div
+>
+
+<
+script
+>
+
 const SUPA_URL  = 'https://ospebrnwdvhuituoyxlw.supabase.co';
 const SUPA_KEY  = 'sb_publishable_k7BrujJj8-zWKaLoHr1gfA_WRn_KWlQ';
 const sb = supabase.createClient(SUPA_URL, SUPA_KEY);
-
 function showMsg(text, type) {
   var el = document.getElementById('msg');
   el.textContent = text;
   el.className = 'msg ' + type;
 }
-
 async function doSignup() {
   var name     = document.getElementById('f-name').value.trim();
   var email    = document.getElementById('f-email').value.trim();
@@ -87,7 +473,6 @@ async function doSignup() {
   var pass     = document.getElementById('f-pass').value;
   var pass2    = document.getElementById('f-pass2').value;
   var btn      = document.getElementById('submitBtn');
-
   // Basic validation
   if (!name)  { showMsg('Please enter your full name.', 'err'); return; }
   if (!email) { showMsg('Please enter your email address.', 'err'); return; }
@@ -95,54 +480,52 @@ async function doSignup() {
   if (!pass)  { showMsg('Please enter a password.', 'err'); return; }
   if (pass.length < 6) { showMsg('Password must be at least 6 characters.', 'err'); return; }
   if (pass !== pass2) { showMsg('Passwords do not match.', 'err'); return; }
-
   btn.disabled = true;
   btn.textContent = 'Creating account...';
   document.getElementById('msg').className = 'msg';
-
   try {
-    // Step 1: Create auth account
-    var authRes = await sb.auth.signUp({ email: email, password: pass });
-
-    // Error from Supabase auth — show exact message, never {}
-    if (authRes.error) {
-      var errMsg = authRes.error.message || authRes.error.msg || authRes.error.error_description || '';
-      if (!errMsg) {
-        try { errMsg = JSON.stringify(authRes.error); } catch(e) { errMsg = 'Sign up failed. Please try again.'; }
-      }
+    // Step 1: Create auth account (UPDATED)
+    const { data: authData, error: authError } = await sb.auth.signUp({
+      email: email,
+      password: pass,
+    });
+    if (authError) {
+      // Always show a real message (never "{}")
+      var errMsg =
+        authError.message ||
+        authError.error_description ||
+        authError.msg ||
+        String(authError);
       // Friendly overrides for common cases
-      if (errMsg.toLowerCase().includes('already registered') ||
-          errMsg.toLowerCase().includes('user already registered')) {
+      var lower = (errMsg || '').toLowerCase();
+      if (lower.includes('already registered') || lower.includes('user already registered')) {
         errMsg = 'This email is already registered. Please log in instead.';
       }
-      if (errMsg.toLowerCase().includes('rate limit') ||
-          errMsg.toLowerCase().includes('too many')) {
+      if (lower.includes('rate limit') || lower.includes('too many')) {
         errMsg = 'Too many attempts. Please wait a few minutes and try again.';
       }
-      if (errMsg.toLowerCase().includes('invalid email')) {
+      if (lower.includes('invalid email')) {
         errMsg = 'Please enter a valid email address.';
       }
-      if (errMsg.toLowerCase().includes('password')) {
+      if (lower.includes('password')) {
         errMsg = 'Password must be at least 6 characters.';
       }
-      showMsg(errMsg, 'err');
+      showMsg(errMsg || 'Signup failed. Please try again.', 'err');
       btn.disabled = false;
       btn.textContent = 'Create Account';
       return;
     }
-
-    var user = authRes.data && authRes.data.user;
-
-    // No user returned — almost always means email already exists
-    // (Supabase returns obfuscated response for existing emails when
-    //  confirmation is enabled, or null user on some error states)
-    if (!user || !user.id) {
-      showMsg('This email may already be registered. Please try logging in instead, or use a different email.', 'err');
+    var user = authData?.user;
+    // No user returned — usually means existing email / unexpected state
+    if (!user?.id) {
+      showMsg(
+        'Signup did not return a user. If this email was used before, please log in instead.',
+        'err'
+      );
       btn.disabled = false;
       btn.textContent = 'Create Account';
       return;
     }
-
     // Step 2: Create profile row
     var profileRes = await sb.from('agent_profiles').insert([{
       id:       user.id,
@@ -153,39 +536,40 @@ async function doSignup() {
       role:     'agent',
       status:   'pending'
     }]);
-
     if (profileRes.error) {
-      // Profile insert failed — check if it's a duplicate (already exists)
-      var errMsg = profileRes.error.message || '';
-      if (errMsg.includes('duplicate') || errMsg.includes('unique') || errMsg.includes('already exists')) {
+      // Profile insert failed — show best available message
+      var e = profileRes.error;
+      var errMsg =
+        e?.message ||
+        e?.hint ||
+        e?.details ||
+        String(e);
+      var lower2 = (errMsg || '').toLowerCase();
+      if (lower2.includes('duplicate') || lower2.includes('unique') || lower2.includes('already exists')) {
         showMsg('An account with this email already exists. Please log in instead.', 'err');
-      } else if (errMsg.includes('foreign key')) {
+      } else if (lower2.includes('foreign key')) {
         showMsg('Account created but profile setup failed. Please try logging in — if that fails, contact support.', 'err');
       } else {
-        showMsg('Profile setup failed: ' + errMsg, 'err');
+        showMsg('Profile setup failed: ' + (errMsg || 'Please try again.'), 'err');
       }
       btn.disabled = false;
       btn.textContent = 'Create Account';
       return;
     }
-
-    // Step 3: Log signup activity (best-effort, don't block on failure)
+    // Step 3: Log signup activity (best-effort)
     sb.from('activity_log').insert([{
       profile_id: user.id,
       action: 'signup',
       detail: 'Agent account created'
     }]).then(function(){}, function(){});
-
-    // Step 4: Sign out so they go through login flow properly after approval
+    // Step 4: Sign out
     sb.auth.signOut().then(function(){}, function(){});
-
-    // Success — show message then redirect to login
+    // Success — show message then redirect
     showMsg('Signup successful! Your account is pending admin approval. Redirecting to login...', 'ok');
     btn.textContent = 'Account Created';
     setTimeout(function() {
       window.location.href = 'agent-login.html';
     }, 2500);
-
   } catch (e) {
     console.error(e);
     showMsg('Unexpected error: ' + (e.message || 'Please try again.'), 'err');
@@ -193,6 +577,14 @@ async function doSignup() {
     btn.textContent = 'Create Account';
   }
 }
-</script>
-</body>
-</html>
+</
+script
+>
+
+</
+body
+>
+
+</
+html
+>
