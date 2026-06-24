@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Agent Sign Up — DM Car Agency</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=Oswald:wght@500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'DM Sans',sans-serif;background:#080808;color:#f0ede8;
+  min-height:100vh;display:flex;align-items:center;justify-content:center;padding:1.5rem}
+.card{background:#111;border:1px solid rgba(255,255,255,.07);border-radius:6px;
+  padding:2rem 1.75rem;width:100%;max-width:420px}
+.logo{font-family:'Oswald',sans-serif;font-size:1.2rem;letter-spacing:2px;
+  margin-bottom:.3rem;text-align:center}
+.logo span{color:#e8491d}
+.sub{font-size:.75rem;color:#777;text-align:center;margin-bottom:2rem;letter-spacing:1px;text-transform:uppercase}
+.fl{display:block;font-size:.65rem;letter-spacing:1px;text-transform:uppercase;
+  color:#777;margin-bottom:.35rem;margin-top:.9rem}
+.fi{width:100%;background:#181818;border:1px solid rgba(255,255,255,.08);
+  color:#f0ede8;padding:.7rem .85rem;border-radius:4px;font-size:.9rem;
+  font-family:'DM Sans',sans-serif;transition:border-color .15s}
+.fi:focus{outline:none;border-color:#e8491d}
+.btn{width:100%;margin-top:1.5rem;background:#e8491d;color:#fff;border:none;
+  padding:.82rem;border-radius:4px;font-family:'Oswald',sans-serif;letter-spacing:2px;
+  font-size:.82rem;text-transform:uppercase;cursor:pointer;transition:opacity .2s}
+.btn:hover{opacity:.88}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.msg{margin-top:1rem;padding:.75rem .9rem;border-radius:4px;font-size:.84rem;
+  line-height:1.55;display:none}
+.msg.ok{background:rgba(39,174,96,.1);border:1px solid rgba(39,174,96,.25);
+  color:#6fcf97;display:block}
+.msg.err{background:rgba(231,76,60,.1);border:1px solid rgba(231,76,60,.25);
+  color:#ff8a65;display:block}
+.foot{text-align:center;margin-top:1.25rem;font-size:.82rem;color:#555}
+.foot a{color:#c8973a;text-decoration:none}
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="logo">DM CAR <span>AGENCY</span></div>
+  <div class="sub">Agent Sign Up</div>
+
+  <div id="formWrap">
+    <label class="fl">Full Name *</label>
+    <input class="fi" type="text" id="f-name" autocomplete="name" placeholder="Your full name">
+
+    <label class="fl">Email *</label>
+    <input class="fi" type="email" id="f-email" autocomplete="email" placeholder="your@email.com">
+
+    <label class="fl">Phone *</label>
+    <input class="fi" type="tel" id="f-phone" autocomplete="tel" placeholder="+265 xxx xxx xxx">
+
+    <label class="fl">Location</label>
+    <input class="fi" type="text" id="f-location" placeholder="e.g. Blantyre">
+
+    <label class="fl">Password *</label>
+    <input class="fi" type="password" id="f-pass" autocomplete="new-password" placeholder="Minimum 6 characters">
+
+    <label class="fl">Confirm Password *</label>
+    <input class="fi" type="password" id="f-pass2" autocomplete="new-password" placeholder="Repeat password">
+
+    <button class="btn" id="submitBtn" onclick="doSignup()">Create Account</button>
+    <div class="msg" id="msg"></div>
+  </div>
+
+  <div class="foot">Already have an account? <a href="agent-login.html">Log in</a></div>
+</div>
+
+<script>
+const SUPA_URL  = 'https://ospebrnwdvhuituoyxlw.supabase.co';
+const SUPA_KEY  = 'sb_publishable_k7BrujJj8-zWKaLoHr1gfA_WRn_KWlQ';
+const sb = supabase.createClient(SUPA_URL, SUPA_KEY);
+
+function showMsg(text, type) {
+  var el = document.getElementById('msg');
+  el.textContent = text;
+  el.className = 'msg ' + type;
+}
+
+async function doSignup() {
+  var name     = document.getElementById('f-name').value.trim();
+  var email    = document.getElementById('f-email').value.trim();
+  var phone    = document.getElementById('f-phone').value.trim();
+  var location = document.getElementById('f-location').value.trim();
+  var pass     = document.getElementById('f-pass').value;
+  var pass2    = document.getElementById('f-pass2').value;
+  var btn      = document.getElementById('submitBtn');
+
+  // Basic validation
+  if (!name)  { showMsg('Please enter your full name.', 'err'); return; }
+  if (!email) { showMsg('Please enter your email address.', 'err'); return; }
+  if (!phone) { showMsg('Please enter your phone number.', 'err'); return; }
+  if (!pass)  { showMsg('Please enter a password.', 'err'); return; }
+  if (pass.length < 6) { showMsg('Password must be at least 6 characters.', 'err'); return; }
+  if (pass !== pass2) { showMsg('Passwords do not match.', 'err'); return; }
+
+  btn.disabled = true;
+  btn.textContent = 'Creating account...';
+  document.getElementById('msg').className = 'msg';
+
+  try {
+    // Step 1: Create auth account
+    var authRes = await sb.auth.signUp({ email: email, password: pass });
+
+    if (authRes.error) {
+      showMsg(authRes.error.message || 'Sign up failed. Please try again.', 'err');
+      btn.disabled = false;
+      btn.textContent = 'Create Account';
+      return;
+    }
+
+    var user = authRes.data && authRes.data.user;
+
+    if (!user || !user.id) {
+      showMsg('Account could not be created. This email may already be registered — try logging in instead.', 'err');
+      btn.disabled = false;
+      btn.textContent = 'Create Account';
+      return;
+    }
+
+    // Step 2: Create profile row
+    var profileRes = await sb.from('agent_profiles').insert([{
+      id:       user.id,
+      full_name: name,
+      email:    email,
+      phone:    phone,
+      location: location || null,
+      role:     'agent',
+      status:   'pending'
+    }]);
+
+    if (profileRes.error) {
+      // Profile insert failed — check if it's a duplicate (already exists)
+      var errMsg = profileRes.error.message || '';
+      if (errMsg.includes('duplicate') || errMsg.includes('unique') || errMsg.includes('already exists')) {
+        showMsg('An account with this email already exists. Please log in instead.', 'err');
+      } else if (errMsg.includes('foreign key')) {
+        showMsg('Account created but profile setup failed. Please try logging in — if that fails, contact support.', 'err');
+      } else {
+        showMsg('Profile setup failed: ' + errMsg, 'err');
+      }
+      btn.disabled = false;
+      btn.textContent = 'Create Account';
+      return;
+    }
+
+    // Step 3: Log signup activity (best-effort, don't block on failure)
+    sb.from('activity_log').insert([{
+      profile_id: user.id,
+      action: 'signup',
+      detail: 'Agent account created'
+    }]).then(function(){}, function(){});
+
+    // Step 4: Sign out so they go through login flow properly after approval
+    sb.auth.signOut().then(function(){}, function(){});
+
+    // Success!
+    showMsg('Account created! Your application is pending admin approval. You will receive access once an admin approves your account.', 'ok');
+    btn.textContent = 'Account Created';
+
+  } catch (e) {
+    console.error(e);
+    showMsg('Unexpected error: ' + (e.message || 'Please try again.'), 'err');
+    btn.disabled = false;
+    btn.textContent = 'Create Account';
+  }
+}
+</script>
+</body>
+</html>
