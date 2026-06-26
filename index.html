@@ -121,62 +121,6 @@ body::after {
 /* ═══════════════════════════════════════
    HEADER / NAV
 ═══════════════════════════════════════ */
-
-/* ── MAINTENANCE BANNER ── */
-.maint-banner {
-  background: linear-gradient(135deg, #1a0a00 0%, #0f0800 100%);
-  border-bottom: 1px solid rgba(232,73,29,.3);
-  padding: .65rem 1.5rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: .75rem;
-  font-size: .78rem;
-  color: rgba(240,237,232,.75);
-  text-align: center;
-  flex-wrap: wrap;
-  position: relative;
-  z-index: 999;
-}
-.maint-banner .maint-icon {
-  font-size: .9rem;
-  animation: spin-slow 4s linear infinite;
-}
-@keyframes spin-slow { to { transform: rotate(360deg); } }
-.maint-banner .maint-pill {
-  background: rgba(232,73,29,.15);
-  border: 1px solid rgba(232,73,29,.35);
-  color: #e8491d;
-  font-size: .65rem;
-  padding: .18rem .55rem;
-  border-radius: 20px;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  font-weight: 600;
-  flex-shrink: 0;
-}
-.maint-banner a {
-  color: #c8973a;
-  text-decoration: none;
-  white-space: nowrap;
-}
-.maint-banner a:hover { text-decoration: underline; }
-.maint-banner .maint-close {
-  position: absolute;
-  right: 1rem;
-  top: 50%;
-  transform: translateY(-50%);
-  background: transparent;
-  border: none;
-  color: rgba(240,237,232,.35);
-  cursor: pointer;
-  font-size: .85rem;
-  line-height: 1;
-  padding: .25rem;
-  transition: color .15s;
-}
-.maint-banner .maint-close:hover { color: rgba(240,237,232,.7); }
-
 header {
   position: fixed; top: 0; left: 0; right: 0; z-index: 900;
   padding: 0 4vw;
@@ -1292,64 +1236,7 @@ footer {
   .footer-bottom { flex-direction:column; text-align:center; }
   .stats-inner { grid-template-columns:1fr 1fr; }
   .section-
-/* ── MAINTENANCE BANNER ── */
-.maint-banner {
-  background: linear-gradient(135deg, #1a0a00 0%, #0f0800 100%);
-  border-bottom: 1px solid rgba(232,73,29,.3);
-  padding: .65rem 1.5rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: .75rem;
-  font-size: .78rem;
-  color: rgba(240,237,232,.75);
-  text-align: center;
-  flex-wrap: wrap;
-  position: relative;
-  z-index: 999;
-}
-.maint-banner .maint-icon {
-  font-size: .9rem;
-  animation: spin-slow 4s linear infinite;
-}
-@keyframes spin-slow { to { transform: rotate(360deg); } }
-.maint-banner .maint-pill {
-  background: rgba(232,73,29,.15);
-  border: 1px solid rgba(232,73,29,.35);
-  color: #e8491d;
-  font-size: .65rem;
-  padding: .18rem .55rem;
-  border-radius: 20px;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  font-weight: 600;
-  flex-shrink: 0;
-}
-.maint-banner a {
-  color: #c8973a;
-  text-decoration: none;
-  white-space: nowrap;
-}
-.maint-banner a:hover { text-decoration: underline; }
-.maint-banner .maint-close {
-  position: absolute;
-  right: 1rem;
-  top: 50%;
-  transform: translateY(-50%);
-  background: transparent;
-  border: none;
-  color: rgba(240,237,232,.35);
-  cursor: pointer;
-  font-size: .85rem;
-  line-height: 1;
-  padding: .25rem;
-  transition: color .15s;
-}
-.maint-banner .maint-close:hover { color: rgba(240,237,232,.7); }
 
-header { flex-direction:column; align-items:flex-start; }
-  .chat-panel { width:calc(100vw - 2rem); right:1rem; }
-}
 
 /* ── AGENT SIGNUP CTA SECTION ── */
 #agent-cta {
@@ -1574,15 +1461,6 @@ const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON, {
     </button>
   </div>
 </header>
-
-<!-- MAINTENANCE BANNER -->
-<div class="maint-banner" id="maintBanner">
-  <span class="maint-icon">⚙️</span>
-  <span class="maint-pill">Maintenance</span>
-  <span>Agent portal under maintenance — sign-ups &amp; logins available soon. &nbsp;<a href="agent-signup.html" style="color:#c8973a">Sign up now</a> &nbsp;|&nbsp; <a href="agent-login.html" style="color:#c8973a">Log in</a></span>
-  <a href="https://wa.me/265980717420">💬 WhatsApp us</a>
-  <button class="maint-close" onclick="dismissBanner()" title="Dismiss">✕</button>
-</div>
 
 <!-- HERO -->
 <section id="hero">
@@ -2532,19 +2410,6 @@ const countObs = new IntersectionObserver((entries) => {
   });
 }, { threshold: 0.5 });
 document.querySelectorAll('.stat-item').forEach(el => countObs.observe(el));
-
-// Maintenance banner dismiss
-function dismissBanner(){
-  var b = document.getElementById('maintBanner');
-  if(b){ b.style.display='none'; sessionStorage.setItem('maintDismissed','1'); }
-}
-// Auto-hide if already dismissed this session
-(function(){
-  if(sessionStorage.getItem('maintDismissed')==='1'){
-    var b = document.getElementById('maintBanner');
-    if(b) b.style.display='none';
-  }
-})();
 
 </script>
 </body>
